@@ -1,0 +1,72 @@
+[
+  {
+    "team": "Nyy",
+    "type": "Fav",
+    "risk": "1.67",
+    "toWin": "3",
+    "deficit": 4.67
+  },
+  {
+    "team": "Nyy",
+    "type": "Fav",
+    "risk": "1.98",
+    "toWin": "16",
+    "deficit": 17.98
+  },
+  {
+    "team": "SD",
+    "type": "Fav",
+    "risk": "2.65",
+    "toWin": "1",
+    "deficit": 3.65,
+    "gameKey": "MLB:SD|Sac:2025-06-24"
+  },
+  {
+    "team": "hou",
+    "type": "Dog",
+    "risk": "3",
+    "toWin": "6",
+    "deficit": 9,
+    "gameKey": "MLB:hou:2025-06-24:1"
+  },
+  {
+    "team": "chi",
+    "type": "Fav",
+    "risk": "6",
+    "toWin": "1",
+    "deficit": 7,
+    "gameKey": "MLB:chi|ciw:2025-06-24"
+  },
+  {
+    "team": "lal",
+    "type": "Dog",
+    "risk": "6",
+    "toWin": "76",
+    "deficit": 82,
+    "gameKey": "MLB:laa|lal:2025-06-24"
+  },
+  {
+    "team": "Tex",
+    "type": "Dog",
+    "risk": "72.45",
+    "toWin": "83",
+    "deficit": 155.45,
+    "gameKey": "MLB:Bal|Tex:2025-06-24"
+  },
+  {
+    "team": "Det",
+    "type": "Fav",
+    "risk": "3.25",
+    "toWin": "1",
+    "deficit": 4.25,
+    "gameKey": "MLB:Det|Oak:2025-06-24"
+  },
+  {
+    "team": "AZ",
+    "type": "Fav",
+    "risk": "1.5",
+    "toWin": "1",
+    "deficit": 2.5,
+    "gameKey": "MLB:AZ|CWS:2025-06-25"
+  }
+]
