@@ -34,7 +34,7 @@ const DeficitsList = ({ onBack, onDeficitClick }) => {
   // Delete a single deficit by index
   const handleDelete = (sortedIdx) => {
     const originalIdx = getOriginalIndex(sortedIdx);
-    fetch(`http://localhost:8080/api/deficits/${originalIdx}`, {
+    fetch(`${import.meta.env.VITE_API_URL}/deficits/${originalIdx}`, {
       method: "DELETE",
     })
       .then((res) => res.json())
@@ -58,7 +58,7 @@ const DeficitsList = ({ onBack, onDeficitClick }) => {
     const originalIndices = selected.map(getOriginalIndex);
     Promise.all(
       originalIndices.map((idx) =>
-        fetch(`http://localhost:8080/api/deficits/${idx}`, {
+        fetch(`${import.meta.env.VITE_API_URL}/deficits/${idx}`, {
           method: "DELETE",
         }),
       ),
@@ -72,7 +72,7 @@ const DeficitsList = ({ onBack, onDeficitClick }) => {
 
   // Delete all deficits
   const handleDeleteAll = () => {
-    fetch("http://localhost:8080/api/deficits", { method: "DELETE" })
+    fetch(`${import.meta.env.VITE_API_URL}/deficits`, { method: "DELETE" })
       .then((res) => res.json())
       .then(() => {
         setDeficits([]);
@@ -188,4 +188,3 @@ const DeficitsList = ({ onBack, onDeficitClick }) => {
 };
 
 export default DeficitsList;
-
