@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react'
-import './App.css'
-import axios from 'axios'
-import BetScreen from './BetScreen'
-import PendingWagers from './PendingWagers'
-import DeficitsList from './DeficitsList';
+import { useState, useEffect } from "react";
+import "./App.css";
+import axios from "axios";
+import BetScreen from "./BetScreen";
+import PendingWagers from "./PendingWagers";
+import DeficitsList from "./DeficitsList";
 
 function App() {
   const [array, setArray] = useState([]);
@@ -15,7 +15,7 @@ function App() {
   const [dogToWin, setDogToWin] = useState(""); // <-- Add this line
 
   const fetchAPI = async () => {
-    const response = await axios.get('http://localhost:8080/api');
+    const response = await axios.get(`${import.meta.env.VITE_API_URL}`);
     setArray(response.data.sports);
     console.log(response.data.sports);
   };
@@ -26,15 +26,15 @@ function App() {
 
   // Handler to add a wager to the pending wagers list
   const handlePlaceBet = (wager) => {
-    setWagers(prev => [...prev, wager]);
+    setWagers((prev) => [...prev, wager]);
     setSelectedSport(null);
     setShowPending(true); // Optionally show pending wagers after placing a bet
     setDogToWin(""); // Optionally clear Dog To Win after placing a bet
   };
 
   const handleLoss = (wager) => {
-    setWagers(prev => prev.filter(w => w !== wager));
-    setLosses(prev => [...prev, wager]);
+    setWagers((prev) => prev.filter((w) => w !== wager));
+    setLosses((prev) => [...prev, wager]);
   };
 
   return (
@@ -45,7 +45,7 @@ function App() {
           setShowPending(true);
           setShowDeficits(false);
         }}
-        style={{ margin: '8px', padding: "10px 20px" }}
+        style={{ margin: "8px", padding: "10px 20px" }}
       >
         Pending
       </button>
@@ -55,7 +55,7 @@ function App() {
           setShowPending(false);
           setSelectedSport(null);
         }}
-        style={{ margin: '8px', padding: "10px 20px" }}
+        style={{ margin: "8px", padding: "10px 20px" }}
       >
         Deficits
       </button>
@@ -63,7 +63,7 @@ function App() {
         {array.map((sport, index) => (
           <button
             key={index}
-            style={{ margin: '8px', padding: "10px 20px" }}
+            style={{ margin: "8px", padding: "10px 20px" }}
             onClick={() => {
               setSelectedSport(sport);
               setShowPending(false);
@@ -77,7 +77,7 @@ function App() {
       {showDeficits ? (
         <DeficitsList
           onBack={() => setShowDeficits(false)}
-          onDeficitClick={amount => {
+          onDeficitClick={(amount) => {
             setDogToWin(amount);
             setShowDeficits(false); // Optionally close the list after click
             setShowPending(false);
@@ -96,7 +96,8 @@ function App() {
         />
       ) : null}
     </>
-  )
+  );
 }
 
 export default App;
+
