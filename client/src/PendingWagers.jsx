@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 // Group wagers by order submitted: every two wagers (Fav and Dog) are a game box
 function groupWagersBySubmission(wagers) {
@@ -27,9 +27,10 @@ const PendingWagers = ({ wagers, onLoss }) => {
 
   // Helper to remove all wagers for a game from pending
   const removeGameFromPending = (gameWagers) => {
-    gameWagers.forEach((w) => {
-      if (onLoss) onLoss(w);
-    });
+    if (onLoss && gameWagers.length > 0) {
+      // Call onLoss with the first wager (the handler will remove both from backend)
+      onLoss(gameWagers[0]);
+    }
   };
 
   return (
@@ -218,44 +219,81 @@ const PendingWagers = ({ wagers, onLoss }) => {
                 width: "100%",
               }}
               disabled={!selectedWager || submitting[gameKey]}
-              onClick={() => {
+              onClick={async () => {
                 if (!selectedWager) return;
                 setSubmitting((prev) => ({ ...prev, [gameKey]: true }));
 
-                // Find the losing wager (the one not selected)
-                const loserWager = selectedType === "Fav" ? dogWager : favWager;
+                // Get today's date in YYYY-MM-DD format
+                const today = new Date();
+                const todayStr = today.toISOString().slice(0, 10);
 
-                // Only submit the loser to the backend
-                if (loserWager) {
-                  fetch(`${import.meta.env.VITE_API_URL}/deficit`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                      team: loserWager.team,
-                      type: loserWager.type,
-                      risk: loserWager.risk,
-                      toWin: loserWager.toWin,
-                      deficit:
-                        Number(loserWager.risk || 0) +
-                        Number(loserWager.toWin || 0),
-                      gameKey,
-                    }),
-                  })
-                    .then((res) => res.json())
-                    .then(() => {
-                      removeGameFromPending(gameWagers);
+                // If both wagers exist, normal logic
+                if (favWager && dogWager) {
+                  // Find the losing wager (the one not selected)
+                  const loserWager = selectedType === "Fav" ? dogWager : favWager;
+                  const winnerWager = selectedType === "Fav" ? favWager : dogWager;
+
+                  // Submit the loser to the backend (deficit)
+                  if (loserWager) {
+                    fetch(`${import.meta.env.VITE_API_URL}/deficit`, {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        team: loserWager.team,
+                        type: loserWager.type,
+                        risk: loserWager.risk,
+                        toWin: loserWager.toWin,
+                        deficit:
+                          Number(loserWager.risk || 0) +
+                          Number(loserWager.toWin || 0),
+                        gameKey,
+                        date: todayStr,
+                      }),
                     })
-                    .catch((err) => {
-                      alert("Error saving deficit");
+                      .then((res) => res.json())
+                      .catch(() => {});
+                  }
+                  // Submit the winner to the backend (settled)
+                  if (winnerWager && winnerWager.sport && winnerWager.team && winnerWager.type && winnerWager.risk && winnerWager.toWin) {
+                    fetch(`${import.meta.env.VITE_API_URL}/settledWager`, {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        sport: winnerWager.sport,
+                        team: winnerWager.team,
+                        type: winnerWager.type,
+                        risk: winnerWager.risk,
+                        toWin: winnerWager.toWin,
+                        date: todayStr,
+                        gameKey,
+                      }),
                     })
-                    .finally(() => {
-                      setSubmitting((prev) => ({ ...prev, [gameKey]: false }));
-                    });
-                } else {
-                  // If there is no loser (shouldn't happen), just remove from pending
+                      .then((res) => res.json())
+                      .catch(() => {});
+                  }
+                  // Remove both from pending
                   removeGameFromPending(gameWagers);
-                  setSubmitting((prev) => ({ ...prev, [gameKey]: false }));
+                } else {
+                  // Only one wager exists, treat it as settled
+                  const onlyWager = favWager || dogWager;
+                  if (onlyWager && onlyWager.sport && onlyWager.team && onlyWager.type && onlyWager.risk && onlyWager.toWin) {
+                    fetch(`${import.meta.env.VITE_API_URL}/settledWager`, {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        sport: onlyWager.sport,
+                        team: onlyWager.team,
+                        type: onlyWager.type,
+                        risk: onlyWager.risk,
+                        toWin: onlyWager.toWin,
+                        date: todayStr,
+                        gameKey: onlyWager.gameKey,
+                      }),
+                    });
+                  }
+                  removeGameFromPending(gameWagers);
                 }
+                setSubmitting((prev) => ({ ...prev, [gameKey]: false }));
               }}
             >
               Submit Winner

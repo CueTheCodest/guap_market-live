@@ -1,72 +1,199 @@
 [
   {
-    "team": "Nyy",
+    "team": "Tb",
     "type": "Fav",
-    "risk": "1.67",
-    "toWin": "3",
-    "deficit": 4.67
-  },
-  {
-    "team": "Nyy",
-    "type": "Fav",
-    "risk": "1.98",
-    "toWin": "16",
-    "deficit": 17.98
-  },
-  {
-    "team": "SD",
-    "type": "Fav",
-    "risk": "2.65",
+    "risk": "1.45",
     "toWin": "1",
-    "deficit": 3.65,
-    "gameKey": "MLB:SD|Sac:2025-06-24"
+    "deficit": 2.45,
+    "gameKey": "MLB:Tb|Tor:2025-06-30"
   },
   {
-    "team": "hou",
+    "team": "Tor",
+    "type": "Fav",
+    "risk": "5",
+    "toWin": "3.57",
+    "deficit": 8.57,
+    "gameKey": "MLB:Tor|TB:2025-07-01"
+  },
+  {
+    "team": "Test 4",
+    "type": "Fav",
+    "risk": "7.5",
+    "toWin": "5",
+    "deficit": 12.5,
+    "gameKey": "MLB:Test 4|Tezt 4:2025-07-01"
+  },
+  {
+    "team": "Tezt 6",
     "type": "Dog",
+    "risk": "6",
+    "toWin": "9",
+    "deficit": 15,
+    "gameKey": "MLB:Test 5|Tezt 6:2025-07-01"
+  },
+  {
+    "team": "Tezt 7",
+    "type": "Dog",
+    "risk": "14.79",
+    "toWin": "19.35",
+    "deficit": 34.14,
+    "gameKey": "MLB:Test 7|Tezt 7:2025-07-01"
+  },
+  {
+    "team": "Tezt 10",
+    "type": "Dog",
+    "risk": "10",
+    "toWin": "40",
+    "deficit": 50,
+    "gameKey": "MLB:Test 11|Tezt 10:2025-07-01"
+  },
+  {
+    "team": "Tezt 12",
+    "type": "Dog",
+    "risk": "1",
+    "toWin": "4",
+    "deficit": 5,
+    "gameKey": "MLB:Test 12|Tezt 12:2025-07-01"
+  },
+  {
+    "team": "Test 13",
+    "type": "Fav",
+    "risk": "5",
+    "toWin": "1",
+    "deficit": 6,
+    "gameKey": "MLB:Test 13|Tezt 13:2025-07-01"
+  },
+  {
+    "team": "Test 15",
+    "type": "Fav",
+    "risk": "2",
+    "toWin": "1",
+    "deficit": 3,
+    "gameKey": "MLB:Test 15|Tezt 15 :2025-07-01"
+  },
+  {
+    "team": "Tezt 17 ",
+    "type": "Dog",
+    "risk": "1",
+    "toWin": "2",
+    "deficit": 3,
+    "gameKey": "MLB:Test 17|Tezt 17 :2025-07-01"
+  },
+  {
+    "team": "Tezt 17 ",
+    "type": "Dog",
+    "risk": "1",
+    "toWin": "2",
+    "deficit": 3,
+    "gameKey": "MLB:Test 17|Tezt 17 :2025-07-01"
+  },
+  {
+    "team": "Tezt 17 ",
+    "type": "Dog",
+    "risk": "1",
+    "toWin": "2",
+    "deficit": 3,
+    "gameKey": "MLB:Test 17|Tezt 17 :2025-07-01"
+  },
+  {
+    "team": "Tezt 17 ",
+    "type": "Dog",
+    "risk": "1",
+    "toWin": "2",
+    "deficit": 3,
+    "gameKey": "MLB:Test 17|Tezt 17 :2025-07-01"
+  },
+  {
+    "team": "Tezt 17 ",
+    "type": "Dog",
+    "risk": "1",
+    "toWin": "2",
+    "deficit": 3,
+    "gameKey": "MLB:Test 17|Tezt 17 :2025-07-01"
+  },
+  {
+    "team": "Tezt 17 ",
+    "type": "Dog",
+    "risk": "1",
+    "toWin": "2",
+    "deficit": 3,
+    "gameKey": "MLB:Test 17|Tezt 17 :2025-07-01"
+  },
+  {
+    "team": "Tezt 17 ",
+    "type": "Dog",
+    "risk": "1",
+    "toWin": "2",
+    "deficit": 3,
+    "gameKey": "MLB:Test 17|Tezt 17 :2025-07-01"
+  },
+  {
+    "team": "Tezt 17 ",
+    "type": "Dog",
+    "risk": "1",
+    "toWin": "2",
+    "deficit": 3,
+    "gameKey": "MLB:Test 17|Tezt 17 :2025-07-01"
+  },
+  {
+    "team": "Tezt 17 ",
+    "type": "Dog",
+    "risk": "1",
+    "toWin": "2",
+    "deficit": 3,
+    "gameKey": "MLB:Test 17|Tezt 17 :2025-07-01"
+  },
+  {
+    "team": "Tezt 17 ",
+    "type": "Dog",
+    "risk": "1",
+    "toWin": "2",
+    "deficit": 3,
+    "gameKey": "MLB:Test 17|Tezt 17 :2025-07-01"
+  },
+  {
+    "team": "Test 20",
+    "type": "Fav",
     "risk": "3",
-    "toWin": "6",
-    "deficit": 9,
-    "gameKey": "MLB:hou:2025-06-24:1"
-  },
-  {
-    "team": "chi",
-    "type": "Fav",
-    "risk": "6",
     "toWin": "1",
-    "deficit": 7,
-    "gameKey": "MLB:chi|ciw:2025-06-24"
+    "deficit": 4,
+    "gameKey": "MLB:Test 20|Tezt 20:2025-07-01",
+    "date": "2025-07-01"
   },
   {
-    "team": "lal",
-    "type": "Dog",
-    "risk": "6",
-    "toWin": "76",
-    "deficit": 82,
-    "gameKey": "MLB:laa|lal:2025-06-24"
-  },
-  {
-    "team": "Tex",
-    "type": "Dog",
-    "risk": "72.45",
-    "toWin": "83",
-    "deficit": 155.45,
-    "gameKey": "MLB:Bal|Tex:2025-06-24"
-  },
-  {
-    "team": "Det",
+    "team": "Test 21",
     "type": "Fav",
-    "risk": "3.25",
+    "risk": "2",
     "toWin": "1",
-    "deficit": 4.25,
-    "gameKey": "MLB:Det|Oak:2025-06-24"
+    "deficit": 3,
+    "gameKey": "MLB:Test 21|Tezt 22:2025-07-01",
+    "date": "2025-07-01"
   },
   {
-    "team": "AZ",
+    "team": "Test 22",
     "type": "Fav",
-    "risk": "1.5",
+    "risk": "2",
     "toWin": "1",
-    "deficit": 2.5,
-    "gameKey": "MLB:AZ|CWS:2025-06-25"
+    "deficit": 3,
+    "gameKey": "MLB:Test 22|Tezt 21:2025-07-01",
+    "date": "2025-07-01"
+  },
+  {
+    "team": "Test 25",
+    "type": "Fav",
+    "risk": "2",
+    "toWin": "1",
+    "deficit": 3,
+    "gameKey": "MLB:Test 25|Tezt 25:2025-07-01",
+    "date": "2025-07-01"
+  },
+  {
+    "team": "ej",
+    "type": "Fav",
+    "risk": "2",
+    "toWin": "1",
+    "deficit": 3,
+    "gameKey": "MLB:ej|js:2025-07-01",
+    "date": "2025-07-01"
   }
 ]

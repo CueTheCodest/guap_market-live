@@ -162,7 +162,7 @@ const DeficitsList = ({ onBack, onDeficitClick }) => {
                   onClick={() => handleDeficitClick(deficit, idx)}
                   title="Click to use this amount for Dog To Win"
                 >
-                  {deficit.deficit}
+                  {Number(deficit.deficit).toFixed(1)}
                 </span>
               </div>
               <button

@@ -5,13 +5,17 @@ const getToday = () => {
   return d.toISOString().slice(0, 10);
 };
 
-const BetScreen = ({ sport, onBack, onPlaceBet, dogToWin, setDogToWin }) => {
+const BetScreen = ({ sport, onBack, onPlaceBet, dogToWin, setDogToWin, favToWin, setFavToWin }) => {
   const [favTeam, setFavTeam] = useState("");
   const [dogTeam, setDogTeam] = useState("");
   const [favRisk, setFavRisk] = useState("");
-  const [favToWin, setFavToWin] = useState("");
   const [dogRisk, setDogRisk] = useState("");
   const [date, setDate] = useState(getToday());
+
+  // Keep favToWin in sync with prop
+  useEffect(() => {
+    if (favToWin !== "") setFavToWin(favToWin);
+  }, [favToWin, setFavToWin]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -45,7 +49,18 @@ const BetScreen = ({ sport, onBack, onPlaceBet, dogToWin, setDogToWin }) => {
 
   return (
     <div style={{ maxWidth: 500, margin: "0 auto", padding: 24, background: "#f5faff", borderRadius: 8, color: "#111", boxShadow: "0 2px 8px rgba(25, 118, 210, 0.07)" }}>
-      <button onClick={onBack} style={{ marginBottom: 16 }}>Back</button>
+      <button 
+        onClick={onBack} 
+        style={{ 
+          marginBottom: 16, 
+          background: '#1976d2', 
+          color: '#fff', 
+          border: 'none', 
+          borderRadius: 4, 
+          padding: '8px 16px',
+          fontWeight: 'bold',
+        }}
+      >Back</button>
       <h2>Place a Bet - {sport}</h2>
       <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}>
@@ -119,7 +134,7 @@ const BetScreen = ({ sport, onBack, onPlaceBet, dogToWin, setDogToWin }) => {
             />
           </label>
           <label style={{ flex: 1 }}>
-            To Win:{" "}
+            To Win: {" "}
             <input
               type="number"
               value={dogToWin}
@@ -146,7 +161,19 @@ const BetScreen = ({ sport, onBack, onPlaceBet, dogToWin, setDogToWin }) => {
             />
           </label>
         </div>
-        <button type="submit" style={{ padding: "8px 20px" }}>Run It</button>
+        <button 
+          type="submit" 
+          style={{ 
+            padding: '8px 20px', 
+            background: '#1976d2', 
+            color: '#fff', 
+            border: 'none', 
+            borderRadius: 4, 
+            fontWeight: 'bold',
+            marginTop: 12,
+            width: '100%',
+          }}
+        >Run It</button>
       </form>
     </div>
   );
