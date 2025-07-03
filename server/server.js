@@ -7,7 +7,7 @@ require("dotenv").config();
 
 // Update CORS options for development
 const corsOptions = {
-  origin: ["http://localhost:5173"],
+  origin: [process.env.CLIENT_ORIGIN],
 };
 
 app.use(cors(corsOptions));
