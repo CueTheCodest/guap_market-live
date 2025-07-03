@@ -96,14 +96,14 @@ function SettledCalendar() {
   const totalsForDay = selectedDateStr ? dailyTotals[selectedDateStr] : null;
 
   return (
-    <div style={{ padding: 24, minWidth: 350 }}>
+    <div style={{ padding: 12, minWidth: 0, width: '100%', maxWidth: 600, margin: '0 auto' }}>
       {/* Calendar icon as title */}
       <div style={{ display: 'flex', alignItems: 'center', marginBottom: 16 }}>
         <span style={{ fontSize: 32, color: '#1976d2', marginRight: 8 }} role="img" aria-label="calendar">📅</span>
         <span style={{ fontWeight: 700, fontSize: 20, color: '#1976d2' }}>Settled Wagers</span>
       </div>
       {selectedDate === null ? (
-        <div ref={calendarRef}>
+        <div ref={calendarRef} style={{ width: '100%', maxWidth: 600, margin: '0 auto' }}>
           <CustomCalendar
             onClickDay={setSelectedDate}
             tileContent={tileContent}
@@ -133,6 +133,7 @@ function SettledCalendar() {
             alignItems: 'center',
             justifyContent: 'center',
             transition: 'background 0.3s',
+            padding: 0,
           }}
           onClick={() => { setSelectedDate(null); setZoomedDate(null); }}
         >
@@ -140,12 +141,16 @@ function SettledCalendar() {
             style={{
               background: '#fff',
               borderRadius: 12,
-              padding: zoomedDate ? 48 : 32,
-              minWidth: zoomedDate ? 420 : 350,
+              padding: zoomedDate ? 24 : 12,
+              minWidth: 0,
+              width: '95vw',
+              maxWidth: 500,
               boxShadow: '0 4px 24px #0002',
               position: 'relative',
-              transform: zoomedDate ? 'scale(1.08)' : 'scale(1)',
+              transform: zoomedDate ? 'scale(1.04)' : 'scale(1)',
               transition: 'transform 0.3s, padding 0.3s, min-width 0.3s',
+              maxHeight: '90vh',
+              overflowY: 'auto',
             }}
             onClick={e => e.stopPropagation()}
           >
@@ -156,9 +161,9 @@ function SettledCalendar() {
               ×
             </button>
             <div style={{ marginTop: 10 }}>
-              <h3 style={{ color: '#43a047', marginBottom: 12 }}>Settled Wagers for {selectedDateStr}</h3>
+              <h3 style={{ color: '#43a047', marginBottom: 12, fontSize: 18 }}>Settled Wagers for {selectedDateStr}</h3>
               {totalsForDay && (
-                <div style={{ marginBottom: 16, fontSize: 16, color: '#1976d2' }}>
+                <div style={{ marginBottom: 16, fontSize: 15, color: '#1976d2' }}>
                   <b>Total Wagered:</b> ${totalsForDay.totalWagered.toFixed(1)} &nbsp;|&nbsp; <b>Total To Win:</b> ${totalsForDay.totalToWin.toFixed(1)}
                 </div>
               )}
@@ -168,9 +173,9 @@ function SettledCalendar() {
                 <div>
                   {wagersForDay.map((w, i) => (
                     <div className="settled-wager-card" key={i}>
-                      <div style={{ fontWeight: 'bold', color: '#1976d2' }}>{w.sport} - {w.team} <span style={{ color: '#888', fontWeight: 'normal' }}>({w.type || (w.amount > 0 ? 'win' : 'loss')})</span></div>
-                      <div>Risk: <b>${w.risk}</b> &nbsp;|&nbsp; To Win: <b>${w.toWin}</b></div>
-                      <div>
+                      <div style={{ fontWeight: 'bold', color: '#1976d2', fontSize: 15 }}>{w.sport} - {w.team} <span style={{ color: '#888', fontWeight: 'normal' }}>({w.type || (w.amount > 0 ? 'win' : 'loss')})</span></div>
+                      <div style={{ fontSize: 14 }}>Risk: <b>${w.risk}</b> &nbsp;|&nbsp; To Win: <b>${w.toWin}</b></div>
+                      <div style={{ fontSize: 14 }}>
                         Result: <b style={{ color: w.amount > 0 ? '#43a047' : '#d32f2f' }}>{w.amount > 0 ? '+' : ''}${w.amount}</b>
                       </div>
                       {w.gameKey && <div style={{ fontSize: 12, color: '#888' }}>Game Key: {w.gameKey}</div>}
@@ -187,9 +192,20 @@ function SettledCalendar() {
           position: relative;
         }
         .react-calendar__tile abbr {
-          font-size: 1.25em;
+          font-size: 1.15em;
           font-weight: bold;
           color: #222;
+        }
+        @media (max-width: 600px) {
+          .react-calendar {
+            width: 100vw !important;
+            min-width: 0 !important;
+            font-size: 15px !important;
+          }
+          .settled-wager-card {
+            font-size: 13px !important;
+            padding: 10px 8px !important;
+          }
         }
         .calendar-selected-day {
           background: #1976d2 !important;
