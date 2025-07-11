@@ -145,45 +145,101 @@ function App() {
   return (
     <>
       <h1>Guap Market Live</h1>
-      <button
-        onClick={() => setShowSettled(true)}
-        style={{
-          margin: "8px",
-          padding: "10px 20px",
-          position: 'relative',
-          background: netProfit >= 0 ? '#43a047' : '#d32f2f',
-          color: '#fff',
-          border: 'none',
-          borderRadius: 8,
-          fontWeight: 'bold'
-        }}
-      >
-        Settled
-        <span style={{
-          display: 'block',
-          fontSize: '0.85em',
-          fontWeight: 'bold',
-          color: netProfit >= 0 ? '#43a047' : '#d32f2f',
-          background: netProfit >= 0 ? '#e8f5e9' : '#ffebee',
-          borderRadius: 8,
-          padding: '2px 8px',
-          marginTop: 4,
-        }}>
-          {netProfit === 0
-            ? '$0.00'
-            : netProfit > 0
-              ? `$${netProfit.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})}`
-              : `-$${Math.abs(netProfit).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})}`
-          } (Net)
-        </span>
-      </button>
-      <button
-        onClick={() => setShowCalendar(true)}
-        style={{ margin: "8px", padding: "10px 20px", background: '#1976d2', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22 }}
-        title="Open Settled Calendar"
-      >
-        <span role="img" aria-label="calendar">📅</span>
-      </button>
+      <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginBottom: 24, flexWrap: 'wrap' }}>
+        <button
+          onClick={() => setShowSettled(true)}
+          style={{
+            margin: 0,
+            padding: '10px 20px',
+            position: 'relative',
+            background: netProfit >= 0 ? '#43a047' : '#d32f2f',
+            color: '#fff',
+            border: 'none',
+            borderRadius: 8,
+            fontWeight: 'bold',
+            minWidth: 110,
+          }}
+        >
+          Settled
+          <span style={{
+            display: 'block',
+            fontSize: '0.85em',
+            fontWeight: 'bold',
+            color: netProfit >= 0 ? '#43a047' : '#d32f2f',
+            background: netProfit >= 0 ? '#e8f5e9' : '#ffebee',
+            borderRadius: 8,
+            padding: '2px 8px',
+            marginTop: 4,
+          }}>
+            {netProfit === 0
+              ? '$0.00'
+              : netProfit > 0
+                ? `$${netProfit.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})}`
+                : `-$${Math.abs(netProfit).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})}`
+            } (Net)
+          </span>
+        </button>
+        <button
+          onClick={() => {
+            loadPendingWagers();
+            setShowPending(true);
+            setShowDeficits(false);
+            setShowSettled(false);
+          }}
+          style={{ margin: 0, padding: '10px 20px', position: 'relative', minWidth: 110 }}
+        >
+          Pending
+          <span style={{
+            display: 'block',
+            fontSize: '0.85em',
+            fontWeight: 'bold',
+            color: '#1976d2',
+            background: '#e3f2fd',
+            borderRadius: 8,
+            padding: '2px 8px',
+            marginTop: 4,
+          }}>
+            ${totalRisked.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})} / ${totalToWin.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})}
+          </span>
+        </button>
+        <button
+          onClick={() => {
+            setShowDeficits(true);
+            setShowPending(false);
+            setShowSettled(false);
+          }}
+          style={{ margin: 0, padding: '10px 20px', position: 'relative', minWidth: 110 }}
+        >
+          Deficits
+          <span style={{
+            display: 'block',
+            fontSize: '0.85em',
+            fontWeight: 'bold',
+            color: '#d32f2f',
+            background: '#ffebee',
+            borderRadius: 8,
+            padding: '2px 8px',
+            marginTop: 4,
+          }}>
+            ${totalDeficit.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})}
+          </span>
+        </button>
+      </div>
+      <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginBottom: 24, flexWrap: 'wrap' }}>
+        <button
+          onClick={() => setShowPerDay(true)}
+          style={{ margin: 0, padding: '10px 20px', background: '#43a047', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 'bold', minWidth: 110 }}
+        >
+          Per Day
+        </button>
+        <button
+          onClick={() => setShowCalendar(true)}
+          style={{ margin: 0, padding: '10px 20px', background: '#1976d2', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, minWidth: 110 }}
+          title="Open Settled Calendar"
+        >
+          <span role="img" aria-label="calendar">📅</span>
+        </button>
+      </div>
       {showCalendar && (
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
           <div style={{ background: '#fff', padding: 32, borderRadius: 12, minWidth: 420, boxShadow: '0 4px 24px #0002', color: '#222', position: 'relative' }}>
@@ -192,58 +248,6 @@ function App() {
           </div>
         </div>
       )}
-      <button
-        onClick={() => {
-          loadPendingWagers();
-          setShowPending(true);
-          setShowDeficits(false);
-          setShowSettled(false);
-        }}
-        style={{ margin: "8px", padding: "10px 20px", position: 'relative' }}
-      >
-        Pending
-        <span style={{
-          display: 'block',
-          fontSize: '0.85em',
-          fontWeight: 'bold',
-          color: '#1976d2',
-          background: '#e3f2fd',
-          borderRadius: 8,
-          padding: '2px 8px',
-          marginTop: 4,
-        }}>
-          ${totalRisked.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})} / ${totalToWin.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})}
-        </span>
-      </button>
-      <button
-        onClick={() => {
-          setShowDeficits(true);
-          setShowPending(false);
-          setSelectedSport(null);
-          loadDeficits();
-        }}
-        style={{ margin: "8px", padding: "10px 20px", position: 'relative' }}
-      >
-        Deficits
-        <span style={{
-          display: 'block',
-          fontSize: '0.85em',
-          fontWeight: 'bold',
-          color: '#d32f2f',
-          background: '#ffebee',
-          borderRadius: 8,
-          padding: '2px 8px',
-          marginTop: 4,
-        }}>
-          ${totalDeficit.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})}
-        </span>
-      </button>
-      <button
-        onClick={() => setShowPerDay(true)}
-        style={{ margin: "8px", padding: "10px 20px", background: '#43a047', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 'bold' }}
-      >
-        Per Day
-      </button>
       {showPerDay && (
         <div style={{
           position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
