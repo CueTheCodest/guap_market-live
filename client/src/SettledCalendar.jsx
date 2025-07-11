@@ -163,7 +163,26 @@ function SettledCalendar() {
           >
             <button
               onClick={() => { setSelectedDate(null); setZoomedDate(null); }}
-              style={{ marginBottom: 18, background: '#1976d2', color: '#fff', border: 'none', borderRadius: 6, padding: '6px 18px', fontWeight: 'bold', cursor: 'pointer', position: 'absolute', top: 16, right: 16 }}
+              style={{
+                marginBottom: 18,
+                background: '#1976d2',
+                color: '#fff',
+                border: 'none',
+                borderRadius: 6,
+                padding: '6px 18px',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                position: 'absolute',
+                top: 8,
+                right: 8,
+                zIndex: 10,
+                // Responsive for mobile
+                maxWidth: '40vw',
+                minWidth: 36,
+                minHeight: 36,
+                fontSize: 18,
+                boxShadow: '0 2px 8px #1976d233',
+              }}
             >
               ×
             </button>
@@ -226,6 +245,16 @@ function SettledCalendar() {
           }
           h3 {
             font-size: 1.1em !important;
+          }
+          /* Ensure close button is always visible */
+          button[style*='position: absolute'] {
+            top: 8px !important;
+            right: 8px !important;
+            z-index: 10 !important;
+            min-width: 36px !important;
+            min-height: 36px !important;
+            font-size: 18px !important;
+            padding: 6px 10px !important;
           }
         }
         .calendar-selected-day {
