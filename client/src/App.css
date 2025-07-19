@@ -5,6 +5,23 @@
   text-align: center;
 }
 
+@media (max-width: 600px) {
+  #root {
+    max-width: 100vw;
+    padding: 0.5rem;
+  }
+  .card {
+    padding: 1em;
+  }
+  h1 {
+    font-size: 2em;
+  }
+  button {
+    font-size: 1em;
+    padding: 0.8em 1em;
+  }
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;

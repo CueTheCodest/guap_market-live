@@ -30,6 +30,13 @@ function SettledCalendar() {
     return '';
   }
 
+  // Helper to format date as MM-DD-YYYY
+  function formatDateMMDDYYYY(dateStr) {
+    if (!dateStr) return '';
+    const [yyyy, mm, dd] = dateStr.split('-');
+    return `${mm}/${dd}/${yyyy}`;
+  }
+
   // Group settled wagers by settledAt date (or fallback to date)
   const wagersByDate = settled.reduce((acc, wager) => {
     const date = getDateString(wager.settledAt || wager.date);
@@ -114,7 +121,7 @@ function SettledCalendar() {
           <div style={{ marginTop: 18 }}>
             {Object.entries(dailyTotals).map(([date, totals]) => (
               <div key={date} style={{ fontSize: 14, color: '#333', marginBottom: 4 }}>
-                <b>{date}:</b> Wagered: <b>${totals.totalWagered.toFixed(1)}</b> &nbsp;|&nbsp; To Win: <b>${totals.totalToWin.toFixed(1)}</b>
+                <b>{formatDateMMDDYYYY(date)}:</b> Wagered: <b>${totals.totalWagered.toFixed(1)}</b> &nbsp;|&nbsp; To Win: <b>${totals.totalToWin.toFixed(1)}</b>
               </div>
             ))}
           </div>
@@ -156,26 +163,32 @@ function SettledCalendar() {
           >
             <button
               onClick={() => { setSelectedDate(null); setZoomedDate(null); }}
-              style={{ 
-                marginBottom: 18, 
-                background: '#1976d2', 
-                color: '#fff', 
-                border: 'none', 
-                borderRadius: 6, 
-                padding: '6px 18px', 
-                fontWeight: 'bold', 
-                cursor: 'pointer', 
-                position: 'absolute', 
-                top: 16, 
-                left: '50%', 
+              style={{
+                marginBottom: 18,
+                background: '#1976d2',
+                color: '#fff',
+                border: 'none',
+                borderRadius: 6,
+                padding: '6px 18px',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                position: 'absolute',
+                top: 16,
+                left: '50%',
                 transform: 'translateX(-50%)',
-                zIndex: 10
+                zIndex: 10,
+                // Mobile responsive improvements
+                maxWidth: '40vw',
+                minWidth: 36,
+                minHeight: 36,
+                fontSize: 18,
+                boxShadow: '0 2px 8px #1976d233',
               }}
             >
               ×
             </button>
             <div style={{ marginTop: 10 }}>
-              <h3 style={{ color: '#43a047', marginBottom: 12, fontSize: 18 }}>Settled Wagers for {selectedDateStr}</h3>
+              <h3 style={{ color: '#43a047', marginBottom: 12, fontSize: 18 }}>Settled Wagers for {formatDateMMDDYYYY(selectedDateStr)}</h3>
               {totalsForDay && (
                 <div style={{ marginBottom: 16, fontSize: 15, color: '#1976d2' }}>
                   <b>Total Wagered:</b> ${totalsForDay.totalWagered.toFixed(1)} &nbsp;|&nbsp; <b>Total To Win:</b> ${totalsForDay.totalToWin.toFixed(1)}
@@ -219,6 +232,30 @@ function SettledCalendar() {
           .settled-wager-card {
             font-size: 13px !important;
             padding: 10px 8px !important;
+          }
+          .react-calendar__tile {
+            min-height: 44px !important;
+            padding: 2px 0 !important;
+          }
+          .react-calendar__month-view {
+            padding: 0 2px !important;
+          }
+          .react-calendar__navigation button {
+            min-width: 32px !important;
+            font-size: 1em !important;
+          }
+          h3 {
+            font-size: 1.1em !important;
+          }
+          /* Ensure close button is always visible */
+          button[style*='position: absolute'] {
+            top: 8px !important;
+            right: 8px !important;
+            z-index: 10 !important;
+            min-width: 36px !important;
+            min-height: 36px !important;
+            font-size: 18px !important;
+            padding: 6px 10px !important;
           }
         }
         .calendar-selected-day {
