@@ -20,24 +20,29 @@ const BetScreen = ({ sport, onBack, onPlaceBet, dogToWin, setDogToWin, favToWin,
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!favTeam || !dogTeam || !favRisk || !favToWin || !dogRisk || !dogToWin || !date) return;
-    // Place Fav bet
-    onPlaceBet({
+    
+    // Submit both wagers as a single atomic game
+    const favWager = {
       sport,
       team: favTeam,
       type: "Fav",
       risk: favRisk,
       toWin: favToWin,
       date,
-    });
-    // Place Dog bet
-    onPlaceBet({
+    };
+    
+    const dogWager = {
       sport,
       team: dogTeam,
       type: "Dog",
       risk: dogRisk,
       toWin: dogToWin,
       date,
-    });
+    };
+    
+    // Use the new game submission endpoint
+    onPlaceBet({ favWager, dogWager });
+    
     setFavTeam("");
     setDogTeam("");
     setFavRisk("");
