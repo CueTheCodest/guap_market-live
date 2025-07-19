@@ -164,30 +164,30 @@ function SettledCalendar() {
             <button
               onClick={() => { setSelectedDate(null); setZoomedDate(null); }}
               style={{
-                marginBottom: 18,
                 background: '#1976d2',
                 color: '#fff',
                 border: 'none',
                 borderRadius: 6,
-                padding: '6px 18px',
+                padding: '8px 20px',
                 fontWeight: 'bold',
                 cursor: 'pointer',
                 position: 'absolute',
-                top: 16,
+                top: 12,
                 left: '50%',
                 transform: 'translateX(-50%)',
-                zIndex: 10,
-                // Mobile responsive improvements
-                maxWidth: '40vw',
-                minWidth: 36,
-                minHeight: 36,
-                fontSize: 18,
-                boxShadow: '0 2px 8px #1976d233',
+                zIndex: 1000,
+                fontSize: 16,
+                boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+                minWidth: 40,
+                minHeight: 40,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
               }}
             >
               ×
             </button>
-            <div style={{ marginTop: 10 }}>
+            <div style={{ marginTop: 60 }}>
               <h3 style={{ color: '#43a047', marginBottom: 12, fontSize: 18 }}>Settled Wagers for {formatDateMMDDYYYY(selectedDateStr)}</h3>
               {totalsForDay && (
                 <div style={{ marginBottom: 16, fontSize: 15, color: '#1976d2' }}>
@@ -247,10 +247,12 @@ function SettledCalendar() {
           h3 {
             font-size: 1.1em !important;
           }
-          /* Ensure close button is always visible */
+          /* Ensure close button is centered at top */
           button[style*='position: absolute'] {
             top: 8px !important;
-            right: 8px !important;
+            left: 50% !important;
+            right: auto !important;
+            transform: translateX(-50%) !important;
             z-index: 10 !important;
             min-width: 36px !important;
             min-height: 36px !important;
