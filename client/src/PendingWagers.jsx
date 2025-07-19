@@ -1,16 +1,41 @@
 import React, { useState } from "react";
 
-// Group wagers by order submitted: every two wagers (Fav and Dog) are a game box
-function groupWagersBySubmission(wagers) {
+// Group wagers by gameId, with fallback to legacy grouping
+function groupWagersByGame(wagers) {
+  // Separate wagers with gameId from legacy wagers
+  const wagersWithGameId = wagers.filter(w => w.gameId);
+  const legacyWagers = wagers.filter(w => !w.gameId);
+  
   const games = [];
-  for (let i = 0; i < wagers.length; i += 2) {
-    // Each game is an array of up to two wagers (Fav and Dog)
-    games.push(wagers.slice(i, i + 2));
+  
+  // Group wagers with gameId
+  const gameIdGroups = {};
+  wagersWithGameId.forEach(wager => {
+    if (!gameIdGroups[wager.gameId]) {
+      gameIdGroups[wager.gameId] = [];
+    }
+    gameIdGroups[wager.gameId].push(wager);
+  });
+  
+  // Add complete games (both Fav and Dog) to results
+  Object.values(gameIdGroups).forEach(group => {
+    if (group.length === 2) {
+      games.push(group);
+    }
+  });
+  
+  // Handle legacy wagers (old grouping by pairs)
+  for (let i = 0; i < legacyWagers.length; i += 2) {
+    const gameWagers = legacyWagers.slice(i, i + 2);
+    if (gameWagers.length === 2) {
+      games.push(gameWagers);
+    }
   }
+  
   return games;
 }
 
-const PendingWagers = ({ wagers, onLoss }) => {
+const PendingWagers = ({ wagers, onLoss, onRefresh }) => {
   const [clicked, setClicked] = useState({});
   const [submitting, setSubmitting] = useState({});
 
@@ -23,15 +48,7 @@ const PendingWagers = ({ wagers, onLoss }) => {
   const totalToWin = wagers.reduce((sum, d) => sum + Number(d.toWin || 0), 0);
   const totalBalance = totalRisked;
 
-  const grouped = groupWagersBySubmission(wagers);
-
-  // Helper to remove all wagers for a game from pending
-  const removeGameFromPending = (gameWagers) => {
-    if (onLoss && gameWagers.length > 0) {
-      // Call onLoss with the first wager (the handler will remove both from backend)
-      onLoss(gameWagers[0]);
-    }
-  };
+  const grouped = groupWagersByGame(wagers);
 
   return (
     <div>
@@ -69,7 +86,10 @@ const PendingWagers = ({ wagers, onLoss }) => {
         const favWager = gameWagers.find((w) => w.type === "Fav");
         const dogWager = gameWagers.find((w) => w.type === "Dog");
         const teams = [favWager?.team, dogWager?.team].filter(Boolean);
-        const gameKey = `${favWager?.sport || dogWager?.sport || ""}:${teams.join("|")}:${favWager?.date || dogWager?.date || ""}`;
+        const sport = favWager?.sport || dogWager?.sport || "";
+        const date = favWager?.date || dogWager?.date || "";
+        const gameTitle = teams.length === 2 ? `${teams.join(" vs ")}` : `${teams[0] || "Unknown"} (incomplete game)`;
+        const gameKey = `${sport}:${teams.join("|")}:${date}:${idx}`;
         const selectedType = clicked[gameKey];
         const selectedWager =
           selectedType === "Fav"
@@ -92,10 +112,8 @@ const PendingWagers = ({ wagers, onLoss }) => {
             }}
           >
             <div style={{ fontWeight: "bold", marginBottom: "8px" }}>
-              {favWager?.sport || dogWager?.sport || ""}: {teams.join(" vs ")}
-              {favWager?.date || dogWager?.date
-                ? ` (${favWager?.date || dogWager?.date})`
-                : ""}
+              {sport}: {gameTitle}
+              {date ? ` (${date})` : ""}
             </div>
             <div style={{ display: "flex", gap: 16 }}>
               {/* Fav Box */}
@@ -114,24 +132,24 @@ const PendingWagers = ({ wagers, onLoss }) => {
                 <div style={{ fontWeight: "bold", color: "#1976d2" }}>Fav</div>
                 <div>
                   Team:{" "}
-                  {favWager ? (
-                    favWager.team
+                  {favWager && favWager.team !== undefined && favWager.team !== null ? (
+                    favWager.team || "Unknown"
                   ) : (
                     <span style={{ color: "#aaa" }}>N/A</span>
                   )}
                 </div>
                 <div>
                   Risk:{" "}
-                  {favWager ? (
-                    favWager.risk
+                  {favWager && favWager.risk !== undefined && favWager.risk !== null ? (
+                    `$${favWager.risk}`
                   ) : (
                     <span style={{ color: "#aaa" }}>N/A</span>
                   )}
                 </div>
                 <div>
                   To Win:{" "}
-                  {favWager ? (
-                    favWager.toWin
+                  {favWager && favWager.toWin !== undefined && favWager.toWin !== null ? (
+                    `$${favWager.toWin}`
                   ) : (
                     <span style={{ color: "#aaa" }}>N/A</span>
                   )}
@@ -166,24 +184,24 @@ const PendingWagers = ({ wagers, onLoss }) => {
                 <div style={{ fontWeight: "bold", color: "#1976d2" }}>Dog</div>
                 <div>
                   Team:{" "}
-                  {dogWager ? (
-                    dogWager.team
+                  {dogWager && dogWager.team !== undefined && dogWager.team !== null ? (
+                    dogWager.team || "Unknown"
                   ) : (
                     <span style={{ color: "#aaa" }}>N/A</span>
                   )}
                 </div>
                 <div>
                   Risk:{" "}
-                  {dogWager ? (
-                    dogWager.risk
+                  {dogWager && dogWager.risk !== undefined && dogWager.risk !== null ? (
+                    `$${dogWager.risk}`
                   ) : (
                     <span style={{ color: "#aaa" }}>N/A</span>
                   )}
                 </div>
                 <div>
                   To Win:{" "}
-                  {dogWager ? (
-                    dogWager.toWin
+                  {dogWager && dogWager.toWin !== undefined && dogWager.toWin !== null ? (
+                    `$${dogWager.toWin}`
                   ) : (
                     <span style={{ color: "#aaa" }}>N/A</span>
                   )}
@@ -223,76 +241,40 @@ const PendingWagers = ({ wagers, onLoss }) => {
                 if (!selectedWager) return;
                 setSubmitting((prev) => ({ ...prev, [gameKey]: true }));
 
-                // Get today's date in YYYY-MM-DD format
-                const today = new Date();
-                const todayStr = today.toISOString().slice(0, 10);
+                // Use the new settleGame endpoint that handles multiple wagers
+                try {
+                  console.log("Attempting to settle game with teams:", gameWagers.map(w => w.team));
+                  console.log("Selected winner:", selectedWager.team);
+                  
+                  const response = await fetch(`${import.meta.env.VITE_API_URL}/settleGame`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      winner: { team: selectedWager.team },
+                      gameId: gameWagers[0]?.gameId, // Use gameId for precise matching
+                      sport: gameWagers[0]?.sport,
+                      date: gameWagers[0]?.date,
+                      teams: gameWagers.map(w => w.team)
+                    }),
+                  });
 
-                // If both wagers exist, normal logic
-                if (favWager && dogWager) {
-                  // Find the losing wager (the one not selected)
-                  const loserWager = selectedType === "Fav" ? dogWager : favWager;
-                  const winnerWager = selectedType === "Fav" ? favWager : dogWager;
-
-                  // Submit the loser to the backend (deficit)
-                  if (loserWager) {
-                    fetch(`${import.meta.env.VITE_API_URL}/deficit`, {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({
-                        team: loserWager.team,
-                        type: loserWager.type,
-                        risk: loserWager.risk,
-                        toWin: loserWager.toWin,
-                        deficit:
-                          Number(loserWager.risk || 0) +
-                          Number(loserWager.toWin || 0),
-                        gameKey,
-                        date: todayStr,
-                      }),
-                    })
-                      .then((res) => res.json())
-                      .catch(() => {});
+                  if (response.ok) {
+                    const result = await response.json();
+                    console.log(`Settlement successful: ${result.winners} winners, ${result.losers} losers`);
+                    
+                    // Refresh the pending wagers list from the server
+                    if (onRefresh) {
+                      onRefresh();
+                    }
+                  } else {
+                    console.error("Failed to settle game:", await response.text());
+                    alert("Failed to settle game. Please try again.");
                   }
-                  // Submit the winner to the backend (settled)
-                  if (winnerWager && winnerWager.sport && winnerWager.team && winnerWager.type && winnerWager.risk && winnerWager.toWin) {
-                    fetch(`${import.meta.env.VITE_API_URL}/settledWager`, {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({
-                        sport: winnerWager.sport,
-                        team: winnerWager.team,
-                        type: winnerWager.type,
-                        risk: winnerWager.risk,
-                        toWin: winnerWager.toWin,
-                        date: todayStr,
-                        gameKey,
-                      }),
-                    })
-                      .then((res) => res.json())
-                      .catch(() => {});
-                  }
-                  // Remove both from pending
-                  removeGameFromPending(gameWagers);
-                } else {
-                  // Only one wager exists, treat it as settled
-                  const onlyWager = favWager || dogWager;
-                  if (onlyWager && onlyWager.sport && onlyWager.team && onlyWager.type && onlyWager.risk && onlyWager.toWin) {
-                    fetch(`${import.meta.env.VITE_API_URL}/settledWager`, {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({
-                        sport: onlyWager.sport,
-                        team: onlyWager.team,
-                        type: onlyWager.type,
-                        risk: onlyWager.risk,
-                        toWin: onlyWager.toWin,
-                        date: todayStr,
-                        gameKey: onlyWager.gameKey,
-                      }),
-                    });
-                  }
-                  removeGameFromPending(gameWagers);
+                } catch (error) {
+                  console.error("Error settling game:", error);
+                  alert("Error settling game. Please try again.");
                 }
+
                 setSubmitting((prev) => ({ ...prev, [gameKey]: false }));
               }}
             >

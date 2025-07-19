@@ -23,7 +23,12 @@ function App() {
   const [favToWin, setFavToWin] = useState(""); // <-- Add this line
   const [showSettled, setShowSettled] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
-  const settledAmount24h = useSettledAmount24h();
+  const [settledRefreshTrigger, setSettledRefreshTrigger] = useState(0);
+  const settledAmount24h = useSettledAmount24h(settledRefreshTrigger);
+
+  const refreshSettledAmount = () => {
+    setSettledRefreshTrigger(prev => prev + 1);
+  };
 
   const fetchAPI = async () => {
     const response = await axios.get(`${import.meta.env.VITE_API_URL}`);
@@ -48,16 +53,42 @@ function App() {
     }
   };
 
-  // Handler to add a wager to the pending wagers list
-  const handlePlaceBet = async (wager) => {
+  // Handler to add a wager or game to the pending wagers list
+  const handlePlaceBet = async (wagerOrGame) => {
+    console.log("handlePlaceBet received:", wagerOrGame);
+    console.log("API URL:", import.meta.env.VITE_API_URL);
+    
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL}/pendingWager`, wager);
-      setWagers((prev) => [...prev, wager]);
+      // Check if this is a game submission (has favWager and dogWager) or individual wager
+      if (wagerOrGame.favWager && wagerOrGame.dogWager) {
+        // This is a complete game submission
+        const url = `${import.meta.env.VITE_API_URL}/pendingGame`;
+        console.log("Submitting complete game to:", url);
+        console.log("Request payload:", wagerOrGame);
+        
+        const response = await axios.post(url, wagerOrGame);
+        console.log("Game submission response:", response.data);
+        setWagers((prev) => [...prev, wagerOrGame.favWager, wagerOrGame.dogWager]);
+      } else {
+        // This is an individual wager (legacy support)
+        const url = `${import.meta.env.VITE_API_URL}/pendingWager`;
+        console.log("Submitting individual wager to:", url);
+        console.log("Request payload:", wagerOrGame);
+        
+        const response = await axios.post(url, wagerOrGame);
+        console.log("Individual wager response:", response.data);
+        setWagers((prev) => [...prev, wagerOrGame]);
+      }
       setSelectedSport(null);
       setShowPending(true); // Optionally show pending wagers after placing a bet
       setDogToWin(""); // Optionally clear Dog To Win after placing a bet
     } catch (err) {
-      alert("Failed to save wager to server");
+      console.error("Full error object:", err);
+      console.error("Error message:", err.message);
+      console.error("Error response:", err.response);
+      console.error("Error response data:", err.response?.data);
+      console.error("Error response status:", err.response?.status);
+      alert(`Failed to save wager to server: ${err.response?.data?.error || err.message}`);
     }
   };
 
@@ -140,8 +171,9 @@ function App() {
   const totalToWin = wagers.reduce((sum, d) => sum + Number(d.toWin || 0), 0);
   // Calculate total deficits
   const totalDeficit = deficits.reduce((sum, d) => sum + Number(d.deficit || 0), 0);
-  // Calculate net profit for settled button
-  const netProfit = settledAmount24h - totalDeficit;
+  // For the settled button: settledAmount24h now includes net profit/loss
+  // Only subtract deficits if we're using legacy data (will be handled in the hook)
+  const netProfit = settledAmount24h;
 
   return (
     <>
@@ -310,7 +342,7 @@ function App() {
         ))}
       </div>
       {showSettled ? (
-        <SettledWagers />
+        <SettledWagers onReset={refreshSettledAmount} />
       ) : showDeficits ? (
         <DeficitsList
           onBack={() => setShowDeficits(false)}
@@ -322,7 +354,7 @@ function App() {
           }}
         />
       ) : showPending ? (
-        <PendingWagers wagers={wagers} onLoss={handleLoss} />
+        <PendingWagers wagers={wagers} onLoss={handleLoss} onRefresh={loadPendingWagers} />
       ) : selectedSport ? (
         <BetScreen
           sport={selectedSport}
