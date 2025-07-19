@@ -1,0 +1,3 @@
+Guap Market Live 2 - Node/Express Backend
+Created: July 2025
+Unique identifier: guap-market-live-2-server

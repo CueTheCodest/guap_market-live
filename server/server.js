@@ -7,11 +7,19 @@ require("dotenv").config();
 
 // Update CORS options for development
 const corsOptions = {
-  origin: [process.env.CLIENT_ORIGIN],
+  origin: [process.env.CLIENT_ORIGIN || "http://localhost:5173"],
+  credentials: true,
+  optionsSuccessStatus: 200
 };
 
 app.use(cors(corsOptions));
 app.use(express.json()); // To parse JSON bodies
+
+// Add request logging middleware
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
+  next();
+});
 
 // Sports endpoint (already present)
 app.get("/api", (req, res) => {
@@ -22,13 +30,32 @@ app.get("/api", (req, res) => {
 app.post("/api/deficit", (req, res) => {
   const deficit = req.body;
   const filePath = path.join(__dirname, "deficits.json");
-  let existing = [];
-  if (fs.existsSync(filePath)) {
-    existing = JSON.parse(fs.readFileSync(filePath, "utf8"));
-  }
-  existing.push(deficit);
-  fs.writeFileSync(filePath, JSON.stringify(existing, null, 2));
-  res.json({ status: "success", saved: deficit });
+  
+  // Use async file operations to prevent race conditions
+  fs.readFile(filePath, "utf8", (err, data) => {
+    let existing = [];
+    if (!err && data) {
+      try {
+        existing = JSON.parse(data);
+      } catch (parseErr) {
+        console.error("Error parsing deficits.json:", parseErr);
+        return res.status(500).json({ error: "Malformed deficits.json" });
+      }
+    } else if (err && err.code !== 'ENOENT') {
+      console.error("Error reading deficits.json:", err);
+      return res.status(500).json({ error: "Could not read deficits.json" });
+    }
+    
+    existing.push(deficit);
+    
+    fs.writeFile(filePath, JSON.stringify(existing, null, 2), (writeErr) => {
+      if (writeErr) {
+        console.error("Error writing deficits.json:", writeErr);
+        return res.status(500).json({ error: "Could not save deficit" });
+      }
+      res.json({ status: "success", saved: deficit });
+    });
+  });
 });
 
 // Endpoint to get all deficits
@@ -83,13 +110,32 @@ app.delete("/api/deficits", (req, res) => {
 app.post("/api/pendingWager", (req, res) => {
   const wager = req.body;
   const filePath = path.join(__dirname, "pendingWagers.json");
-  let existing = [];
-  if (fs.existsSync(filePath)) {
-    existing = JSON.parse(fs.readFileSync(filePath, "utf8"));
-  }
-  existing.push(wager);
-  fs.writeFileSync(filePath, JSON.stringify(existing, null, 2));
-  res.json({ status: "success", saved: wager });
+  
+  // Use async file operations to prevent race conditions
+  fs.readFile(filePath, "utf8", (err, data) => {
+    let existing = [];
+    if (!err && data) {
+      try {
+        existing = JSON.parse(data);
+      } catch (parseErr) {
+        console.error("Error parsing pendingWagers.json:", parseErr);
+        return res.status(500).json({ error: "Malformed pendingWagers.json" });
+      }
+    } else if (err && err.code !== 'ENOENT') {
+      console.error("Error reading pendingWagers.json:", err);
+      return res.status(500).json({ error: "Could not read pendingWagers.json" });
+    }
+    
+    existing.push(wager);
+    
+    fs.writeFile(filePath, JSON.stringify(existing, null, 2), (writeErr) => {
+      if (writeErr) {
+        console.error("Error writing pendingWagers.json:", writeErr);
+        return res.status(500).json({ error: "Could not save wager" });
+      }
+      res.json({ status: "success", saved: wager });
+    });
+  });
 });
 
 app.get("/api/pendingWagers", (req, res) => {
@@ -215,13 +261,32 @@ app.post("/api/pendingWagers/game", (req, res) => {
 app.post("/api/settledWager", (req, res) => {
   const winner = req.body;
   const filePath = path.join(__dirname, "settledWagers.json");
-  let existing = [];
-  if (fs.existsSync(filePath)) {
-    existing = JSON.parse(fs.readFileSync(filePath, "utf8"));
-  }
-  existing.push(winner);
-  fs.writeFileSync(filePath, JSON.stringify(existing, null, 2));
-  res.json({ status: "success", saved: winner });
+  
+  // Use async file operations to prevent race conditions
+  fs.readFile(filePath, "utf8", (err, data) => {
+    let existing = [];
+    if (!err && data) {
+      try {
+        existing = JSON.parse(data);
+      } catch (parseErr) {
+        console.error("Error parsing settledWagers.json:", parseErr);
+        return res.status(500).json({ error: "Malformed settledWagers.json" });
+      }
+    } else if (err && err.code !== 'ENOENT') {
+      console.error("Error reading settledWagers.json:", err);
+      return res.status(500).json({ error: "Could not read settledWagers.json" });
+    }
+    
+    existing.push(winner);
+    
+    fs.writeFile(filePath, JSON.stringify(existing, null, 2), (writeErr) => {
+      if (writeErr) {
+        console.error("Error writing settledWagers.json:", writeErr);
+        return res.status(500).json({ error: "Could not save settled wager" });
+      }
+      res.json({ status: "success", saved: winner });
+    });
+  });
 });
 
 app.get("/api/settledWagers", (req, res) => {

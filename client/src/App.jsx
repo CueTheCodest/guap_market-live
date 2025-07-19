@@ -18,8 +18,8 @@ function App() {
   const [dogToWin, setDogToWin] = useState(""); // <-- Add this line
   const [deficits, setDeficits] = useState([]);
   const [showPerDay, setShowPerDay] = useState(false);
-  const [perDayAmount, setPerDayAmount] = useState(0);
-  const [teamCount, setTeamCount] = useState(1);
+  const [perDayAmount, setPerDayAmount] = useState("");
+  const [teamCount, setTeamCount] = useState("");
   const [favToWin, setFavToWin] = useState(""); // <-- Add this line
   const [showSettled, setShowSettled] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
@@ -32,6 +32,7 @@ function App() {
   };
 
   useEffect(() => {
+    console.log("fetchAPI function called");
     fetchAPI();
   }, []);
 
@@ -253,20 +254,36 @@ function App() {
             <h2 style={{ color: '#43a047', marginBottom: 24 }}>Per Day Calculator</h2>
             <div style={{ marginBottom: 16 }}>
               <label style={{ fontWeight: 'bold' }}>Team Count: </label>
-              <input type="number" min={1} value={teamCount} onChange={e => setTeamCount(Number(e.target.value))} style={{ width: 80, marginLeft: 8, padding: 4, borderRadius: 4, border: '1px solid #ccc' }} />
+              <input 
+                type="number" 
+                min={1} 
+                value={teamCount} 
+                placeholder="Enter team count"
+                onChange={e => setTeamCount(e.target.value)} 
+                style={{ width: 80, marginLeft: 8, padding: 4, borderRadius: 4, border: '1px solid #ccc' }} 
+              />
             </div>
             <div style={{ marginBottom: 16 }}>
               <label style={{ fontWeight: 'bold' }}>Per Day Amount: </label>
-              <input type="number" min={0} value={perDayAmount} onChange={e => setPerDayAmount(Number(e.target.value))} style={{ width: 120, marginLeft: 8, padding: 4, borderRadius: 4, border: '1px solid #ccc' }} />
+              <input 
+                type="number" 
+                min={0} 
+                value={perDayAmount} 
+                placeholder="Enter amount"
+                onChange={e => setPerDayAmount(e.target.value)} 
+                style={{ width: 120, marginLeft: 8, padding: 4, borderRadius: 4, border: '1px solid #ccc' }} 
+              />
             </div>
             <div style={{ fontWeight: 'bold', fontSize: 20, color: '#1976d2', marginTop: 24 }}>
-              {teamCount > 0 ? `Result: $${(perDayAmount / teamCount).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})} per team` : 'Enter a valid team count'}
+              {(teamCount && perDayAmount && Number(teamCount) > 0 && Number(perDayAmount) >= 0) ? 
+                `Result: $${(Number(perDayAmount) / Number(teamCount)).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2})} per team` : 
+                'Enter team count and per day amount'}
             </div>
             <button
               style={{ marginTop: 24, background: '#1976d2', color: '#fff', border: 'none', borderRadius: 6, padding: '8px 16px', fontWeight: 'bold', cursor: 'pointer', fontSize: 16 }}
-              disabled={teamCount <= 0}
+              disabled={!teamCount || !perDayAmount || Number(teamCount) <= 0 || Number(perDayAmount) < 0}
               onClick={() => {
-                setFavToWin((perDayAmount / teamCount).toFixed(2));
+                setFavToWin((Number(perDayAmount) / Number(teamCount)).toFixed(2));
                 setShowPerDay(false);
               }}
             >Send to Fav To Win</button>

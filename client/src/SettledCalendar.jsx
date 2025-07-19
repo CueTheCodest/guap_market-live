@@ -156,7 +156,21 @@ function SettledCalendar() {
           >
             <button
               onClick={() => { setSelectedDate(null); setZoomedDate(null); }}
-              style={{ marginBottom: 18, background: '#1976d2', color: '#fff', border: 'none', borderRadius: 6, padding: '6px 18px', fontWeight: 'bold', cursor: 'pointer', position: 'absolute', top: 16, right: 16 }}
+              style={{ 
+                marginBottom: 18, 
+                background: '#1976d2', 
+                color: '#fff', 
+                border: 'none', 
+                borderRadius: 6, 
+                padding: '6px 18px', 
+                fontWeight: 'bold', 
+                cursor: 'pointer', 
+                position: 'absolute', 
+                top: 16, 
+                left: '50%', 
+                transform: 'translateX(-50%)',
+                zIndex: 10
+              }}
             >
               ×
             </button>
