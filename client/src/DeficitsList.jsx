@@ -164,7 +164,7 @@ const DeficitsList = ({ onBack, onDeficitClick }) => {
                   onClick={() => handleDeficitClick(deficit, idx)}
                   title="Click to use combined amount (Risk + To Win) for Dog To Win"
                 >
-                  {(Number(deficit.risk || 0) + Number(deficit.toWin || 0)).toFixed(1)}
+                  {(Number(deficit.risk || 0) + Number(deficit.toWin || 0)).toFixed(2)}
                 </span>
               </div>
               <button
