@@ -52,26 +52,21 @@ const SettledWagers = ({ onReset }) => {
   }
 
   // Helper to get sport icon
-  function getSportIcon(sport) {
-    switch ((sport || '').toLowerCase()) {
-      case 'baseball':
-      case 'mlb':
-        return '⚾';
-      case 'basketball':
-      case 'nba':
-        return '🏀';
-      case 'football':
-      case 'nfl':
-        return '🏈';
-      case 'soccer':
-        return '⚽';
-      case 'hockey':
-      case 'nhl':
-        return '🏒';
+  const getSportIcon = (sport) => {
+    switch (sport?.toUpperCase()) {
+      case 'NBA':
+      case 'WNBA':
+        return '🏀'; // Basketball for both NBA and WNBA
+      case 'MLB':
+        return '⚾'; // Baseball
+      case 'NFL':
+        return '🏈'; // Football
+      case 'NHL':
+        return '🏒'; // Hockey
       default:
-        return '🎲';
+        return '🎲'; // Default dice icon
     }
-  }
+  };
 
   if (loading) return <div>Loading settled wagers...</div>;
 

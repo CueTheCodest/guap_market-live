@@ -6,16 +6,34 @@ const DeficitsList = ({ onBack, onDeficitClick }) => {
 
   // Fetch deficits on mount
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL}/deficits`)
-      .then((res) => res.json())
-      .then((data) => setDeficits(data))
-      .catch(() => setDeficits([]));
+    const url = `${import.meta.env.VITE_API_URL || 'http://localhost:8080/api'}/deficits`;
+    console.log("=== DEFICITS FETCH DEBUG ===");
+    console.log("Fetching from URL:", url);
+    console.log("VITE_API_URL:", import.meta.env.VITE_API_URL);
+    
+    fetch(url)
+      .then((res) => {
+        console.log("Response status:", res.status);
+        console.log("Response ok:", res.ok);
+        return res.json();
+      })
+      .then((data) => {
+        console.log("Raw data from server:", data);
+        console.log("Deficit amounts in order:", data.map(d => `${d.team}: ${d.deficit}`));
+        setDeficits(data);
+      })
+      .catch((error) => {
+        console.error("Fetch error:", error);
+        setDeficits([]);
+      });
   }, []);
 
-  // Sort deficits by deficit amount, largest to smallest
-  const sortedDeficits = [...deficits].sort(
-    (a, b) => Number(b.deficit) - Number(a.deficit),
-  );
+  // Sort deficits by COMBINED amount (Risk + To Win), highest to lowest
+  const sortedDeficits = [...deficits].sort((a, b) => {
+    const combinedA = Number(a.risk || 0) + Number(a.toWin || 0);
+    const combinedB = Number(b.risk || 0) + Number(b.toWin || 0);
+    return combinedB - combinedA; // Highest first
+  });
 
   // Map sorted indices back to original indices for deletion
   const getOriginalIndex = (sortedIdx) => {
@@ -34,7 +52,7 @@ const DeficitsList = ({ onBack, onDeficitClick }) => {
   // Delete a single deficit by index
   const handleDelete = (sortedIdx) => {
     const originalIdx = getOriginalIndex(sortedIdx);
-    fetch(`${import.meta.env.VITE_API_URL}/deficits/${originalIdx}`, {
+    fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8080/api'}/deficits/${originalIdx}`, { // Remove /api/
       method: "DELETE",
     })
       .then((res) => res.json())
@@ -54,11 +72,10 @@ const DeficitsList = ({ onBack, onDeficitClick }) => {
 
   // Delete selected deficits
   const handleDeleteSelected = () => {
-    // Get original indices for all selected
     const originalIndices = selected.map(getOriginalIndex);
     Promise.all(
       originalIndices.map((idx) =>
-        fetch(`${import.meta.env.VITE_API_URL}/deficits/${idx}`, {
+        fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8080/api'}/deficits/${idx}`, { // Remove /api/
           method: "DELETE",
         }),
       ),
@@ -72,7 +89,7 @@ const DeficitsList = ({ onBack, onDeficitClick }) => {
 
   // Delete all deficits
   const handleDeleteAll = () => {
-    fetch(`${import.meta.env.VITE_API_URL}/deficits`, { method: "DELETE" })
+    fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8080/api'}/deficits`, { method: "DELETE" }) // Remove /api/
       .then((res) => res.json())
       .then(() => {
         setDeficits([]);

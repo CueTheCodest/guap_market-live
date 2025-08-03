@@ -67,9 +67,13 @@ app.get("/api/deficits", (req, res) => {
     if (err)
       return res.status(500).json({ error: "Could not read deficits.json" });
     try {
-      res.json(JSON.parse(data));
+      const deficits = JSON.parse(data);
+      // Sort by deficit amount - highest first
+      const sortedDeficits = deficits.sort((a, b) => Number(b.deficit) - Number(a.deficit));
+      res.json(sortedDeficits);
     } catch (e) {
-      res.status(500).json({ error: "Malformed deficits.json" });
+      console.error("Error parsing deficits.json:", e);
+      res.status(500).json({ error: "Invalid JSON in deficits.json" });
     }
   });
 });
@@ -477,9 +481,13 @@ app.get("/api/settledWagers", (req, res) => {
     if (err)
       return res.status(500).json({ error: "Could not read settledWagers.json" });
     try {
-      res.json(JSON.parse(data));
+      const settledWagers = JSON.parse(data);
+      // Reverse the array to show most recent first (newest entries are at the end)
+      const reversedWagers = settledWagers.reverse();
+      res.json(reversedWagers);
     } catch (e) {
-      res.status(500).json({ error: "Malformed settledWagers.json" });
+      console.error("Error parsing settledWagers.json:", e);
+      res.status(500).json({ error: "Invalid JSON in settledWagers.json" });
     }
   });
 });
@@ -692,6 +700,115 @@ app.delete("/api/settledWagers", (req, res) => {
     console.error("Error resetting settled wagers:", err);
     res.status(500).json({ error: "Could not reset settled wagers" });
   }
+});
+
+// In your cancel wager endpoint:
+
+app.post("/api/pendingWagers/cancel", (req, res) => {
+  const { gameId, gameKey, team, addToWinToDeficits } = req.body;
+  
+  console.log("Cancel request received:", req.body);
+  
+  const filePath = path.join(__dirname, "pendingWagers.json");
+  fs.readFile(filePath, "utf8", (err, data) => {
+    if (err)
+      return res.status(500).json({ error: "Could not read pendingWagers.json" });
+    let wagers = [];
+    try {
+      wagers = JSON.parse(data);
+    } catch (e) {
+      return res.status(500).json({ error: "Malformed pendingWagers.json" });
+    }
+    
+    // Find the wager to cancel by team, gameId, or gameKey
+    let wagerToCancel;
+    if (gameId) {
+      wagerToCancel = wagers.find(w => w.gameId === gameId && w.team === team);
+    } else if (gameKey) {
+      wagerToCancel = wagers.find(w => w.gameKey === gameKey && w.team === team);
+    } else {
+      wagerToCancel = wagers.find(w => w.team === team);
+    }
+    
+    if (!wagerToCancel) {
+      console.log("Wager not found for:", { gameId, gameKey, team });
+      return res.status(404).json({ error: "Wager not found" });
+    }
+    
+    console.log("Found wager to cancel:", wagerToCancel);
+    
+    // Remove the specific wager
+    const updatedWagers = wagers.filter(w => {
+      if (gameId) {
+        return !(w.gameId === gameId && w.team === team);
+      } else if (gameKey) {
+        return !(w.gameKey === gameKey && w.team === team);
+      } else {
+        return w.team !== team;
+      }
+    });
+    
+    console.log("Wagers before removal:", wagers.length);
+    console.log("Wagers after removal:", updatedWagers.length);
+    
+    fs.writeFile(filePath, JSON.stringify(updatedWagers, null, 2), (err2) => {
+      if (err2) {
+        console.error("Error writing pendingWagers.json:", err2);
+        return res.status(500).json({ error: "Could not write pendingWagers.json" });
+      }
+      
+      // Determine deficit amount based on flag
+      const deficitAmount = addToWinToDeficits ? Number(wagerToCancel.toWin) : Number(wagerToCancel.risk);
+      
+      const deficitEntry = {
+        team: wagerToCancel.team,
+        type: wagerToCancel.type,
+        risk: wagerToCancel.risk,
+        toWin: wagerToCancel.toWin,
+        deficit: deficitAmount,
+        sport: wagerToCancel.sport,
+        date: wagerToCancel.date,
+        addToWinToDeficits: addToWinToDeficits, // Add this flag
+        settledAt: new Date().toISOString()
+      };
+      
+      console.log("Adding deficit entry:", deficitEntry);
+      
+      // Add to deficits.json
+      const deficitsPath = path.join(__dirname, "deficits.json");
+      fs.readFile(deficitsPath, "utf8", (err3, data3) => {
+        let deficits = [];
+        if (!err3 && data3) {
+          try {
+            deficits = JSON.parse(data3);
+          } catch (parseErr) {
+            console.error("Error parsing deficits.json:", parseErr);
+            return res.status(500).json({ error: "Malformed deficits.json" });
+          }
+        } else if (err3 && err3.code !== 'ENOENT') {
+          console.error("Error reading deficits.json:", err3);
+          return res.status(500).json({ error: "Could not read deficits.json" });
+        }
+        
+        deficits.push(deficitEntry);
+        
+        fs.writeFile(deficitsPath, JSON.stringify(deficits, null, 2), (writeErr) => {
+          if (writeErr) {
+            console.error("Error writing deficits.json:", writeErr);
+            return res.status(500).json({ error: "Could not save deficit" });
+          }
+          
+          console.log("Successfully cancelled wager and added deficit");
+          res.json({ 
+            status: "success", 
+            message: `Wager cancelled for ${team}`,
+            deficitAdded: deficitAmount,
+            type: addToWinToDeficits ? "toWin" : "risk"
+          });
+        });
+      });
+    });
+  });
 });
 
 app.listen(8080, () => {

@@ -46,5 +46,77 @@
     "createdAt": "2025-07-19T05:58:52.565Z",
     "amount": -55,
     "settledAt": "2025-07-20T03:18:11.645Z"
+  },
+  {
+    "sport": "MLB",
+    "team": "fd",
+    "type": "win",
+    "risk": "45",
+    "toWin": 67,
+    "date": "2025-08-03",
+    "gameId": "2025-08-03T05:59:10.481Z_v9796tlk3",
+    "createdAt": "2025-08-03T05:59:10.481Z",
+    "amount": 67,
+    "settledAt": "2025-08-03T05:59:14.094Z"
+  },
+  {
+    "sport": "MLB",
+    "team": "ad",
+    "type": "loss",
+    "risk": "23",
+    "toWin": "35",
+    "date": "2025-08-03",
+    "gameId": "2025-08-03T05:59:10.481Z_v9796tlk3",
+    "createdAt": "2025-08-03T05:59:10.481Z",
+    "amount": -23,
+    "settledAt": "2025-08-03T05:59:14.094Z"
+  },
+  {
+    "sport": "WNBA",
+    "team": "jns",
+    "type": "win",
+    "risk": "67",
+    "toWin": "223",
+    "date": "2025-08-03",
+    "gameId": "2025-08-03T06:12:24.146Z_kwetkxb9z",
+    "createdAt": "2025-08-03T06:12:24.146Z",
+    "amount": 223,
+    "settledAt": "2025-08-03T06:12:30.801Z"
+  },
+  {
+    "sport": "WNBA",
+    "team": "awe",
+    "type": "loss",
+    "risk": "15",
+    "toWin": "112",
+    "date": "2025-08-03",
+    "gameId": "2025-08-03T06:12:24.146Z_kwetkxb9z",
+    "createdAt": "2025-08-03T06:12:24.146Z",
+    "amount": -15,
+    "settledAt": "2025-08-03T06:12:30.801Z"
+  },
+  {
+    "sport": "MLB",
+    "team": "thx",
+    "type": "win",
+    "risk": "25",
+    "toWin": "65",
+    "date": "2025-08-03",
+    "gameId": "2025-08-03T07:36:34.388Z_hpuqw7q7g",
+    "createdAt": "2025-08-03T07:36:34.388Z",
+    "amount": 65,
+    "settledAt": "2025-08-03T07:36:40.432Z"
+  },
+  {
+    "sport": "MLB",
+    "team": "htc",
+    "type": "loss",
+    "risk": "55",
+    "toWin": 156.22,
+    "date": "2025-08-03",
+    "gameId": "2025-08-03T07:36:34.388Z_hpuqw7q7g",
+    "createdAt": "2025-08-03T07:36:34.388Z",
+    "amount": -55,
+    "settledAt": "2025-08-03T07:36:40.432Z"
   }
 ]

@@ -35,9 +35,11 @@ function groupWagersByGame(wagers) {
   return games;
 }
 
-const PendingWagers = ({ wagers, onLoss, onRefresh }) => {
+const PendingWagers = ({ wagers, onRefresh }) => {
   const [clicked, setClicked] = useState({});
   const [submitting, setSubmitting] = useState({});
+  const [cancelEnabled, setCancelEnabled] = useState(false);
+  const [tapCount, setTapCount] = useState(0);
 
   if (!wagers || wagers.length === 0) {
     return <div>No pending wagers.</div>;
@@ -50,8 +52,137 @@ const PendingWagers = ({ wagers, onLoss, onRefresh }) => {
 
   const grouped = groupWagersByGame(wagers);
 
+  const handleCancelButtonTap = () => {
+    if (tapCount === 0) {
+      // First tap - enable button temporarily
+      setTapCount(1);
+      setCancelEnabled(true);
+      
+      // Reset after 3 seconds if not tapped again
+      setTimeout(() => {
+        setCancelEnabled(false);
+        setTapCount(0);
+      }, 3000);
+    } else if (tapCount === 1) {
+      // Second tap - execute cancel action
+      setTapCount(0);
+      setCancelEnabled(false);
+      handleCancelAllWagers();
+    }
+  };
+
+  const handleCancelAllWagers = async () => {
+    // Check if any game is selected
+    const selectedGameKeys = Object.keys(clicked).filter(key => clicked[key]);
+    
+    console.log("=== CANCEL DEBUG INFO ===");
+    console.log("Selected game keys:", selectedGameKeys);
+    console.log("Clicked state:", clicked);
+    console.log("Grouped games:", grouped);
+    
+    if (selectedGameKeys.length === 0) {
+      alert('Please select a game first by choosing Fav or Dog.');
+      return;
+    }
+
+    if (!window.confirm('Are you sure you want to cancel the selected game wagers? The "To Win" amounts will be added to deficits.')) {
+      return;
+    }
+
+    try {
+      // For each selected game, cancel both wagers
+      for (const gameKey of selectedGameKeys) {
+        console.log("Processing gameKey:", gameKey);
+        
+        // Find the game wagers for this gameKey
+        const gameIndex = parseInt(gameKey.split(':')[3]); // Extract index from gameKey
+        const gameWagers = grouped[gameIndex];
+        
+        console.log("Game index:", gameIndex);
+        console.log("Game wagers found:", gameWagers);
+        
+        if (gameWagers && gameWagers.length === 2) {
+          // Cancel both Fav and Dog wagers for this game
+          for (const wager of gameWagers) {
+            console.log("Cancelling wager:", wager);
+            
+            const requestBody = {
+              gameId: wager.gameId,
+              gameKey: wager.gameKey,
+              team: wager.team,
+              addToWinToDeficits: true
+            };
+            
+            console.log("Request body:", requestBody);
+            
+            const response = await fetch(
+              `${import.meta.env.VITE_API_URL || 'http://localhost:8080'}/pendingWagers/cancel`, // Remove the /api/ prefix
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(requestBody),
+              }
+            );
+
+            console.log("Response status:", response.status);
+            console.log("Response ok:", response.ok);
+
+            if (!response.ok) {
+              const errorText = await response.text();
+              console.error(`Failed to cancel wager for ${wager.team}:`, errorText);
+              alert(`Failed to cancel wager for ${wager.team}: ${errorText}`);
+              return;
+            } else {
+              const result = await response.json();
+              console.log("Success result:", result);
+            }
+          }
+        } else {
+          console.error("Invalid game wagers:", { gameWagers, length: gameWagers?.length });
+        }
+      }
+
+      alert('Selected game wagers have been cancelled and "To Win" amounts added to deficits.');
+      
+      // Clear selections and reset button state
+      setClicked({});
+      setCancelEnabled(false);
+      setTapCount(0);
+      
+      // Refresh the pending wagers list
+      if (onRefresh) onRefresh();
+      
+    } catch (error) {
+      console.error('Error cancelling selected game wagers:', error);
+      alert(`Failed to cancel wagers: ${error.message}`);
+    }
+  };
+
   return (
     <div>
+      {/* Cancel Button - Above Pending Wagers */}
+      <button
+        onClick={handleCancelButtonTap}
+        disabled={false} // Remove the disabled logic to test
+        style={{
+          marginBottom: "16px",
+          padding: "8px 16px",
+          background: cancelEnabled ? "#ff6b6b" : "#ccc",
+          color: cancelEnabled ? "#fff" : "#666",
+          border: "none",
+          borderRadius: "4px",
+          cursor: "pointer", // Always allow clicking
+          fontSize: "14px",
+          fontWeight: "bold",
+          opacity: cancelEnabled ? 1 : 0.6,
+          transition: "all 0.2s ease",
+        }}
+      >
+        {tapCount === 0 ? "Cancel" : tapCount === 1 ? "Tap Again to Cancel All" : "Cancel"}
+      </button>
+
       <h3>Pending Wagers</h3>
       <div style={{ marginBottom: "12px", color: "#555" }}>
         Total Balance: $
