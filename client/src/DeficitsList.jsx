@@ -81,9 +81,10 @@ const DeficitsList = ({ onBack, onDeficitClick }) => {
   };
 
   const handleDeficitClick = (deficit, idx) => {
-    // Calculate combined amount: risk + toWin
+    // Calculate combined amount: risk + toWin and format to 2 decimal places
     const combinedAmount = Number(deficit.risk || 0) + Number(deficit.toWin || 0);
-    if (onDeficitClick) onDeficitClick(combinedAmount);
+    const formattedAmount = Number(combinedAmount.toFixed(2));
+    if (onDeficitClick) onDeficitClick(formattedAmount);
     handleDelete(idx);
   };
 

@@ -1,1 +1,22 @@
-[]
+[
+  {
+    "team": "aldsk",
+    "type": "Fav",
+    "risk": "1",
+    "toWin": "3",
+    "deficit": 1,
+    "sport": "MLB",
+    "date": "2025-07-20",
+    "settledAt": "2025-07-20T03:17:59.291Z"
+  },
+  {
+    "team": "knoe",
+    "type": "Fav",
+    "risk": "55",
+    "toWin": "12",
+    "deficit": 55,
+    "sport": "MLB",
+    "date": "2025-07-19",
+    "settledAt": "2025-07-20T03:18:11.645Z"
+  }
+]

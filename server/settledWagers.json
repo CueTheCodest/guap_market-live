@@ -1,1 +1,50 @@
-[]
+[
+  {
+    "sport": "MLB",
+    "team": "aosdi",
+    "type": "win",
+    "risk": "3",
+    "toWin": "5",
+    "date": "2025-07-20",
+    "gameId": "2025-07-20T03:17:52.814Z_gnp9adjsb",
+    "createdAt": "2025-07-20T03:17:52.814Z",
+    "amount": 5,
+    "settledAt": "2025-07-20T03:17:59.291Z"
+  },
+  {
+    "sport": "MLB",
+    "team": "aldsk",
+    "type": "loss",
+    "risk": "1",
+    "toWin": "3",
+    "date": "2025-07-20",
+    "gameId": "2025-07-20T03:17:52.814Z_gnp9adjsb",
+    "createdAt": "2025-07-20T03:17:52.814Z",
+    "amount": -1,
+    "settledAt": "2025-07-20T03:17:59.291Z"
+  },
+  {
+    "sport": "MLB",
+    "team": "ima",
+    "type": "win",
+    "risk": "322",
+    "toWin": "99",
+    "date": "2025-07-19",
+    "gameId": "2025-07-19T05:58:52.565Z_vzetx2md3",
+    "createdAt": "2025-07-19T05:58:52.565Z",
+    "amount": 99,
+    "settledAt": "2025-07-20T03:18:11.645Z"
+  },
+  {
+    "sport": "MLB",
+    "team": "knoe",
+    "type": "loss",
+    "risk": "55",
+    "toWin": "12",
+    "date": "2025-07-19",
+    "gameId": "2025-07-19T05:58:52.565Z_vzetx2md3",
+    "createdAt": "2025-07-19T05:58:52.565Z",
+    "amount": -55,
+    "settledAt": "2025-07-20T03:18:11.645Z"
+  }
+]
