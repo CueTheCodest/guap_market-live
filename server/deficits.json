@@ -20,96 +20,6 @@
     "settledAt": "2025-08-03T05:59:14.094Z"
   },
   {
-    "team": "adf",
-    "type": "Dog",
-    "risk": "12",
-    "toWin": "34",
-    "deficit": 7.4,
-    "sport": "MLB",
-    "date": "2025-08-03",
-    "settledAt": "2025-08-03T06:37:14.180Z"
-  },
-  {
-    "team": "afd",
-    "type": "Dog",
-    "risk": "23",
-    "toWin": "23",
-    "deficit": 7.4,
-    "sport": "NBA",
-    "date": "2025-08-03",
-    "settledAt": "2025-08-03T06:37:14.186Z"
-  },
-  {
-    "team": "adf",
-    "type": "Dog",
-    "risk": "23",
-    "toWin": "23",
-    "deficit": 7.1,
-    "sport": "MLB",
-    "date": "2025-08-03",
-    "settledAt": "2025-08-03T06:37:14.181Z"
-  },
-  {
-    "team": "adf",
-    "type": "Dog",
-    "risk": "23",
-    "toWin": "23",
-    "deficit": 6.9,
-    "sport": "WNBA",
-    "date": "2025-08-03",
-    "settledAt": "2025-08-03T06:37:14.181Z"
-  },
-  {
-    "team": "adf",
-    "type": "Dog",
-    "risk": "23",
-    "toWin": "23",
-    "deficit": 6.7,
-    "sport": "WNBA",
-    "date": "2025-08-03",
-    "settledAt": "2025-08-03T06:37:14.182Z"
-  },
-  {
-    "team": "adf",
-    "type": "Dog",
-    "risk": "23",
-    "toWin": "23",
-    "deficit": 3.4,
-    "sport": "WNBA",
-    "date": "2025-08-03",
-    "settledAt": "2025-08-03T06:37:14.182Z"
-  },
-  {
-    "team": "adf",
-    "type": "Dog",
-    "risk": "23",
-    "toWin": "23",
-    "deficit": 3.4,
-    "sport": "WNBA",
-    "date": "2025-08-03",
-    "settledAt": "2025-08-03T06:37:14.183Z"
-  },
-  {
-    "team": "ATL",
-    "type": "Fav",
-    "risk": "3.44",
-    "toWin": "3.13",
-    "deficit": 3.13,
-    "sport": "MLB",
-    "date": "2025-08-03",
-    "settledAt": "2025-08-03T07:18:33.407Z"
-  },
-  {
-    "team": "Cin",
-    "type": "Dog",
-    "risk": "78.5",
-    "toWin": "77.72",
-    "deficit": 77.72,
-    "sport": "MLB",
-    "date": "2025-08-03",
-    "settledAt": "2025-08-03T07:18:33.419Z"
-  },
-  {
     "team": "atl",
     "type": "Fav",
     "risk": "4.24",
@@ -128,15 +38,5 @@
     "sport": "NHL",
     "date": "2025-08-03",
     "settledAt": "2025-08-03T07:26:38.029Z"
-  },
-  {
-    "team": "htc",
-    "type": "Dog",
-    "risk": "55",
-    "toWin": 156.22,
-    "deficit": 55,
-    "sport": "MLB",
-    "date": "2025-08-03",
-    "settledAt": "2025-08-03T07:36:40.432Z"
   }
 ]

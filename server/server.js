@@ -811,6 +811,37 @@ app.post("/api/pendingWagers/cancel", (req, res) => {
   });
 });
 
+// Add this to your server.js file:
+app.delete("/api/deficits/by-timestamp/:timestamp", (req, res) => {
+  const timestamp = decodeURIComponent(req.params.timestamp);
+  console.log("Deleting deficit by timestamp:", timestamp);
+  
+  fs.readFile(path.join(__dirname, "deficits.json"), "utf8", (err, data) => {
+    if (err) return res.status(500).json({ error: "Could not read deficits.json" });
+    
+    try {
+      let deficits = JSON.parse(data);
+      const originalLength = deficits.length;
+      
+      // Filter out the deficit with matching timestamp
+      deficits = deficits.filter(d => d.settledAt !== timestamp);
+      
+      if (deficits.length === originalLength) {
+        return res.status(404).json({ error: "Deficit not found" });
+      }
+      
+      fs.writeFile(path.join(__dirname, "deficits.json"), JSON.stringify(deficits, null, 2), (err) => {
+        if (err) return res.status(500).json({ error: "Could not write deficits.json" });
+        console.log(`Deficit with timestamp ${timestamp} deleted successfully`);
+        res.json({ success: true });
+      });
+    } catch (e) {
+      console.error("Error parsing deficits.json:", e);
+      res.status(500).json({ error: "Invalid JSON in deficits.json" });
+    }
+  });
+});
+
 app.listen(8080, () => {
   console.log("Server is running on port 8080");
 });

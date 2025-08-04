@@ -45,20 +45,32 @@ const DeficitsList = ({ onBack, onDeficitClick }) => {
         d.risk === sortedDeficit.risk &&
         d.toWin === sortedDeficit.toWin &&
         d.deficit === sortedDeficit.deficit &&
-        d.gameKey === sortedDeficit.gameKey,
+        d.settledAt === sortedDeficit.settledAt, // Add this for unique identification
     );
   };
 
   // Delete a single deficit by index
   const handleDelete = (sortedIdx) => {
     const originalIdx = getOriginalIndex(sortedIdx);
-    fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8080/api'}/deficits/${originalIdx}`, { // Remove /api/
+    
+    fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8080/api'}/deficits/${originalIdx}`, {
       method: "DELETE",
     })
       .then((res) => res.json())
-      .then(() =>
-        setDeficits((deficits) => deficits.filter((_, i) => i !== originalIdx)),
-      );
+      .then(() => {
+        console.log("Delete button: Successfully deleted, refreshing data from server");
+        // Refetch from server instead of updating local state
+        const url = `${import.meta.env.VITE_API_URL || 'http://localhost:8080/api'}/deficits`;
+        return fetch(url);
+      })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("Delete button: Refreshed data from server:", data);
+        setDeficits(data);
+      })
+      .catch((error) => {
+        console.error("Error deleting deficit:", error);
+      });
   };
 
   // Select/unselect for multi-delete
@@ -73,17 +85,27 @@ const DeficitsList = ({ onBack, onDeficitClick }) => {
   // Delete selected deficits
   const handleDeleteSelected = () => {
     const originalIndices = selected.map(getOriginalIndex);
+    
     Promise.all(
       originalIndices.map((idx) =>
-        fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8080/api'}/deficits/${idx}`, { // Remove /api/
+        fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8080/api'}/deficits/${idx}`, {
           method: "DELETE",
         }),
       ),
     ).then(() => {
-      setDeficits((deficits) =>
-        deficits.filter((_, i) => !originalIndices.includes(i)),
-      );
+      console.log("Delete selected: Successfully deleted, refreshing data from server");
+      // Refetch from server
+      const url = `${import.meta.env.VITE_API_URL || 'http://localhost:8080/api'}/deficits`;
+      return fetch(url);
+    })
+    .then((res) => res.json())
+    .then((data) => {
+      console.log("Delete selected: Refreshed data from server:", data);
+      setDeficits(data);
       setSelected([]);
+    })
+    .catch((error) => {
+      console.error("Error deleting selected deficits:", error);
     });
   };
 
@@ -97,12 +119,44 @@ const DeficitsList = ({ onBack, onDeficitClick }) => {
       });
   };
 
-  const handleDeficitClick = (deficit, idx) => {
+  // Better approach: Use settledAt timestamp as unique identifier
+  const handleDeficitClick = (deficit, sortedIdx) => {
+    console.log("=== DEFICIT CLICK DEBUG ===");
+    console.log("Clicked deficit:", deficit);
+    console.log("Deficit settledAt:", deficit.settledAt);
+    
     // Calculate combined amount: risk + toWin and format to 2 decimal places
     const combinedAmount = Number(deficit.risk || 0) + Number(deficit.toWin || 0);
     const formattedAmount = Number(combinedAmount.toFixed(2));
+    
+    console.log("Sending amount to Dog To Win:", formattedAmount);
+    
     if (onDeficitClick) onDeficitClick(formattedAmount);
-    handleDelete(idx);
+    
+    // Delete using settledAt timestamp instead of index
+    fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8080/api'}/deficits/by-timestamp/${encodeURIComponent(deficit.settledAt)}`, {
+      method: "DELETE",
+    })
+      .then((res) => {
+        console.log("Delete response status:", res.status);
+        return res.json();
+      })
+      .then((deleteResult) => {
+        console.log("Delete result:", deleteResult);
+        console.log("Successfully deleted, refreshing data from server");
+        // Refetch from server
+        const url = `${import.meta.env.VITE_API_URL || 'http://localhost:8080/api'}/deficits`;
+        return fetch(url);
+      })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("NEW data from server after deletion:", data);
+        console.log("Deficit with settledAt", deficit.settledAt, "still exists:", data.some(d => d.settledAt === deficit.settledAt));
+        setDeficits(data);
+      })
+      .catch((error) => {
+        console.error("Error deleting deficit:", error);
+      });
   };
 
   return (
@@ -179,7 +233,7 @@ const DeficitsList = ({ onBack, onDeficitClick }) => {
                     cursor: "pointer",
                     color: "#1976d2",
                   }}
-                  onClick={() => handleDeficitClick(deficit, idx)}
+                  onClick={() => handleDeficitClick(deficit, idx)} // idx is the sorted index
                   title="Click to use combined amount (Risk + To Win) for Dog To Win"
                 >
                   {(Number(deficit.risk || 0) + Number(deficit.toWin || 0)).toFixed(2)}
