@@ -118,5 +118,101 @@
     "createdAt": "2025-08-03T07:36:34.388Z",
     "amount": -55,
     "settledAt": "2025-08-03T07:36:40.432Z"
+  },
+  {
+    "sport": "MLB",
+    "team": "wer",
+    "type": "win",
+    "risk": "234",
+    "toWin": 211.22,
+    "date": "2025-08-04",
+    "gameId": "2025-08-04T23:02:11.084Z_17x5urujm",
+    "createdAt": "2025-08-04T23:02:11.084Z",
+    "amount": 211.22,
+    "settledAt": "2025-08-04T23:43:29.586Z"
+  },
+  {
+    "sport": "MLB",
+    "team": "MM",
+    "type": "loss",
+    "risk": "234",
+    "toWin": "234",
+    "date": "2025-08-04",
+    "gameId": "2025-08-04T23:02:11.084Z_17x5urujm",
+    "createdAt": "2025-08-04T23:02:11.084Z",
+    "amount": -234,
+    "settledAt": "2025-08-04T23:43:29.586Z"
+  },
+  {
+    "sport": "MLB",
+    "team": "ms",
+    "type": "win",
+    "risk": "22",
+    "toWin": 211.22,
+    "date": "2025-08-04",
+    "gameId": "2025-08-04T23:08:19.637Z_7bjna78js",
+    "createdAt": "2025-08-04T23:08:19.637Z",
+    "amount": 211.22,
+    "settledAt": "2025-08-04T23:47:32.259Z"
+  },
+  {
+    "sport": "MLB",
+    "team": "gr",
+    "type": "loss",
+    "risk": "15",
+    "toWin": "2",
+    "date": "2025-08-04",
+    "gameId": "2025-08-04T23:08:19.637Z_7bjna78js",
+    "createdAt": "2025-08-04T23:08:19.637Z",
+    "amount": -15,
+    "settledAt": "2025-08-04T23:47:32.259Z"
+  },
+  {
+    "sport": "MLB",
+    "team": "s",
+    "type": "win",
+    "risk": "3",
+    "toWin": 211.22,
+    "date": "2025-08-04",
+    "gameId": "2025-08-04T23:16:59.939Z_ec3zlj1tz",
+    "createdAt": "2025-08-04T23:16:59.939Z",
+    "amount": 211.22,
+    "settledAt": "2025-08-04T23:56:06.529Z"
+  },
+  {
+    "sport": "MLB",
+    "team": "2",
+    "type": "loss",
+    "risk": "3",
+    "toWin": "2",
+    "date": "2025-08-04",
+    "gameId": "2025-08-04T23:16:59.939Z_ec3zlj1tz",
+    "createdAt": "2025-08-04T23:16:59.939Z",
+    "amount": -3,
+    "settledAt": "2025-08-04T23:56:06.529Z"
+  },
+  {
+    "sport": "MLB",
+    "team": "fe",
+    "type": "win",
+    "risk": "2",
+    "toWin": "3",
+    "date": "2025-08-04",
+    "gameId": "2025-08-04T23:56:32.836Z_c5evyrrby",
+    "createdAt": "2025-08-04T23:56:32.836Z",
+    "amount": 3,
+    "settledAt": "2025-08-04T23:56:43.862Z"
+  },
+  {
+    "sport": "MLB",
+    "team": "sd",
+    "type": "loss",
+    "risk": "5",
+    "toWin": "1023",
+    "date": "2025-08-04",
+    "gameId": "2025-08-04T23:56:32.836Z_c5evyrrby",
+    "createdAt": "2025-08-04T23:56:32.836Z",
+    "amount": -5,
+    "settledAt": "2025-08-04T23:56:43.862Z"
   }
 ]

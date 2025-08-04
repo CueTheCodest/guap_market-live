@@ -20,6 +20,18 @@ const DeficitsList = ({ onBack, onDeficitClick }) => {
       .then((data) => {
         console.log("Raw data from server:", data);
         console.log("Deficit amounts in order:", data.map(d => `${d.team}: ${d.deficit}`));
+        
+        // Debug the addToWinToDeficits flag
+        console.log("=== CANCELLED WAGER CHECK ===");
+        data.forEach((deficit, i) => {
+          console.log(`Deficit ${i}:`, {
+            team: deficit.team,
+            addToWinToDeficits: deficit.addToWinToDeficits,
+            hasFlag: deficit.addToWinToDeficits === true,
+            settledAt: deficit.settledAt
+          });
+        });
+        
         setDeficits(data);
       })
       .catch((error) => {
@@ -51,15 +63,17 @@ const DeficitsList = ({ onBack, onDeficitClick }) => {
 
   // Delete a single deficit by index
   const handleDelete = (sortedIdx) => {
-    const originalIdx = getOriginalIndex(sortedIdx);
+    const deficit = sortedDeficits[sortedIdx]; // Get the actual deficit object
+    console.log("Delete button clicked for:", deficit);
     
-    fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8080/api'}/deficits/${originalIdx}`, {
+    // Use timestamp-based deletion instead of index
+    fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8080/api'}/deficits/by-timestamp/${encodeURIComponent(deficit.settledAt)}`, {
       method: "DELETE",
     })
       .then((res) => res.json())
       .then(() => {
         console.log("Delete button: Successfully deleted, refreshing data from server");
-        // Refetch from server instead of updating local state
+        // Refetch from server
         const url = `${import.meta.env.VITE_API_URL || 'http://localhost:8080/api'}/deficits`;
         return fetch(url);
       })
@@ -84,17 +98,17 @@ const DeficitsList = ({ onBack, onDeficitClick }) => {
 
   // Delete selected deficits
   const handleDeleteSelected = () => {
-    const originalIndices = selected.map(getOriginalIndex);
+    const selectedDeficits = selected.map(sortedIdx => sortedDeficits[sortedIdx]);
+    console.log("Deleting selected deficits:", selectedDeficits);
     
     Promise.all(
-      originalIndices.map((idx) =>
-        fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8080/api'}/deficits/${idx}`, {
+      selectedDeficits.map((deficit) =>
+        fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8080/api'}/deficits/by-timestamp/${encodeURIComponent(deficit.settledAt)}`, {
           method: "DELETE",
         }),
       ),
     ).then(() => {
       console.log("Delete selected: Successfully deleted, refreshing data from server");
-      // Refetch from server
       const url = `${import.meta.env.VITE_API_URL || 'http://localhost:8080/api'}/deficits`;
       return fetch(url);
     })
@@ -207,7 +221,7 @@ const DeficitsList = ({ onBack, onDeficitClick }) => {
                 borderRadius: 8,
                 marginBottom: 12,
                 padding: 12,
-                background: "#fff",
+                background: deficit.addToWinToDeficits === true ? "#e0e0e0" : "#fff", // Darker grey for better visibility
                 color: "red",
                 display: "flex",
                 alignItems: "center",
@@ -234,9 +248,16 @@ const DeficitsList = ({ onBack, onDeficitClick }) => {
                     color: "#1976d2",
                   }}
                   onClick={() => handleDeficitClick(deficit, idx)} // idx is the sorted index
-                  title="Click to use combined amount (Risk + To Win) for Dog To Win"
+                  title={`Click to use ${
+                    deficit.addToWinToDeficits === true
+                      ? "To Win amount" 
+                      : "combined amount (Risk + To Win)"
+                  } for Dog To Win`}
                 >
-                  {(Number(deficit.risk || 0) + Number(deficit.toWin || 0)).toFixed(2)}
+                  {deficit.addToWinToDeficits === true
+                    ? Number(deficit.toWin || 0).toFixed(2)
+                    : (Number(deficit.risk || 0) + Number(deficit.toWin || 0)).toFixed(2)
+                  }
                 </span>
               </div>
               <button
