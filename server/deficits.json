@@ -52,28 +52,6 @@
     "settledAt": "2025-08-04T23:47:51.596Z"
   },
   {
-    "team": "dd",
-    "type": "Fav",
-    "risk": "232",
-    "toWin": "342",
-    "deficit": 342,
-    "sport": "MLB",
-    "date": "2025-08-04",
-    "addToWinToDeficits": true,
-    "settledAt": "2025-08-04T23:50:57.464Z"
-  },
-  {
-    "team": "ss",
-    "type": "Dog",
-    "risk": "234",
-    "toWin": 211.22,
-    "deficit": 211.22,
-    "sport": "MLB",
-    "date": "2025-08-04",
-    "addToWinToDeficits": true,
-    "settledAt": "2025-08-04T23:50:57.529Z"
-  },
-  {
     "team": "ss",
     "type": "Fav",
     "risk": "23",
@@ -114,5 +92,15 @@
     "sport": "MLB",
     "date": "2025-08-04",
     "settledAt": "2025-08-04T23:56:43.862Z"
+  },
+  {
+    "team": "fd",
+    "type": "Dog",
+    "risk": "23",
+    "toWin": "55",
+    "deficit": 23,
+    "sport": "MLB",
+    "date": "2025-08-05",
+    "settledAt": "2025-08-05T03:27:42.013Z"
   }
 ]

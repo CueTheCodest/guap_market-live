@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 
 const DeficitsList = ({ onBack, onDeficitClick }) => {
   const [deficits, setDeficits] = useState([]);
-  const [selected, setSelected] = useState([]);
+  const [selected, setSelected] = useState([]); // Will store settledAt timestamps instead of indices
 
   // Fetch deficits on mount
   useEffect(() => {
@@ -87,18 +87,27 @@ const DeficitsList = ({ onBack, onDeficitClick }) => {
       });
   };
 
-  // Select/unselect for multi-delete
-  const handleSelect = (sortedIdx) => {
+  // Select/unselect using timestamp instead of index
+  const handleSelect = (deficit) => {
+    const timestamp = deficit.settledAt;
     setSelected((prev) =>
-      prev.includes(sortedIdx)
-        ? prev.filter((i) => i !== sortedIdx)
-        : [...prev, sortedIdx],
+      prev.includes(timestamp)
+        ? prev.filter((t) => t !== timestamp)
+        : [...prev, timestamp]
     );
   };
 
-  // Delete selected deficits
+  // Check if a deficit is selected using its timestamp
+  const isSelected = (deficit) => {
+    return selected.includes(deficit.settledAt);
+  };
+
+  // Delete selected deficits using timestamps
   const handleDeleteSelected = () => {
-    const selectedDeficits = selected.map(sortedIdx => sortedDeficits[sortedIdx]);
+    const selectedDeficits = sortedDeficits.filter(deficit => 
+      selected.includes(deficit.settledAt)
+    );
+    
     console.log("Deleting selected deficits:", selectedDeficits);
     
     Promise.all(
@@ -116,7 +125,7 @@ const DeficitsList = ({ onBack, onDeficitClick }) => {
     .then((data) => {
       console.log("Delete selected: Refreshed data from server:", data);
       setDeficits(data);
-      setSelected([]);
+      setSelected([]); // Clear selection
     })
     .catch((error) => {
       console.error("Error deleting selected deficits:", error);
@@ -215,13 +224,13 @@ const DeficitsList = ({ onBack, onDeficitClick }) => {
         <ul style={{ listStyle: "none", padding: 0 }}>
           {sortedDeficits.map((deficit, idx) => (
             <li
-              key={idx}
+              key={deficit.settledAt} // Use unique timestamp as key
               style={{
                 border: "1px solid #1976d2",
                 borderRadius: 8,
                 marginBottom: 12,
                 padding: 12,
-                background: deficit.addToWinToDeficits === true ? "#e0e0e0" : "#fff", // Darker grey for better visibility
+                background: deficit.addToWinToDeficits === true ? "#e0e0e0" : "#fff",
                 color: "red",
                 display: "flex",
                 alignItems: "center",
@@ -231,8 +240,8 @@ const DeficitsList = ({ onBack, onDeficitClick }) => {
               <div>
                 <input
                   type="checkbox"
-                  checked={selected.includes(idx)}
-                  onChange={() => handleSelect(idx)}
+                  checked={isSelected(deficit)} // Use timestamp-based selection
+                  onChange={() => handleSelect(deficit)} // Pass the deficit object
                   style={{ marginRight: 8 }}
                   title="Select for multi-delete"
                 />
@@ -247,7 +256,7 @@ const DeficitsList = ({ onBack, onDeficitClick }) => {
                     cursor: "pointer",
                     color: "#1976d2",
                   }}
-                  onClick={() => handleDeficitClick(deficit, idx)} // idx is the sorted index
+                  onClick={() => handleDeficitClick(deficit, idx)}
                   title={`Click to use ${
                     deficit.addToWinToDeficits === true
                       ? "To Win amount" 
