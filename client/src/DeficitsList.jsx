@@ -143,20 +143,30 @@ const DeficitsList = ({ onBack, onDeficitClick }) => {
   };
 
   // Better approach: Use settledAt timestamp as unique identifier
-  const handleDeficitClick = (deficit, sortedIdx) => {
+  const handleDeficitClick = (deficit, idx) => {
     console.log("=== DEFICIT CLICK DEBUG ===");
     console.log("Clicked deficit:", deficit);
-    console.log("Deficit settledAt:", deficit.settledAt);
+    console.log("Has addToWinToDeficits flag:", deficit.addToWinToDeficits === true);
     
-    // Calculate combined amount: risk + toWin and format to 2 decimal places
-    const combinedAmount = Number(deficit.risk || 0) + Number(deficit.toWin || 0);
-    const formattedAmount = Number(combinedAmount.toFixed(2));
+    let amount;
     
-    console.log("Sending amount to Dog To Win:", formattedAmount);
+    // Check if this is a cancelled bet (has addToWinToDeficits flag)
+    if (deficit.addToWinToDeficits === true) {
+      // For cancelled wagers, use only the toWin amount
+      amount = Number(deficit.toWin || 0);
+      console.log("Using To Win amount for cancelled wager:", amount);
+    } else {
+      // For other deficits, use combined amount (risk + toWin)
+      amount = Number(deficit.risk || 0) + Number(deficit.toWin || 0);
+      console.log("Using combined Risk + To Win amount for regular deficit:", amount);
+    }
+    
+    const formattedAmount = Number(amount.toFixed(2));
+    console.log("Final amount being sent to Dog To Win:", formattedAmount);
     
     if (onDeficitClick) onDeficitClick(formattedAmount);
     
-    // Delete using settledAt timestamp instead of index
+    // Delete using timestamp-based deletion
     fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8080/api'}/deficits/by-timestamp/${encodeURIComponent(deficit.settledAt)}`, {
       method: "DELETE",
     })
@@ -164,17 +174,14 @@ const DeficitsList = ({ onBack, onDeficitClick }) => {
         console.log("Delete response status:", res.status);
         return res.json();
       })
-      .then((deleteResult) => {
-        console.log("Delete result:", deleteResult);
+      .then(() => {
         console.log("Successfully deleted, refreshing data from server");
-        // Refetch from server
         const url = `${import.meta.env.VITE_API_URL || 'http://localhost:8080/api'}/deficits`;
         return fetch(url);
       })
       .then((res) => res.json())
       .then((data) => {
-        console.log("NEW data from server after deletion:", data);
-        console.log("Deficit with settledAt", deficit.settledAt, "still exists:", data.some(d => d.settledAt === deficit.settledAt));
+        console.log("Refreshed data from server:", data);
         setDeficits(data);
       })
       .catch((error) => {
